@@ -1,0 +1,78 @@
+# There are 2 automation for adzan; 1 is for Subuh, 2 is for the rest of the prayer time (Zohor, Asar, Maghrib, Isyak)
+# Place the adzan audio mp3 files to path /media/audio
+# Change the media_player entity id to your device name. 
+
+- id: '01'
+  alias: Adzan
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.jakim_zohor") == states("sensor.time")}}'
+  - platform: template
+    value_template: '{{states("sensor.jakim_asar") == states("sensor.time")}}'
+  - platform: template
+    value_template: '{{states("sensor.jakim_maghrib") == states("sensor.time")}}'
+  - platform: template
+    value_template: '{{states("sensor.jakim_isyak") == states("sensor.time")}}'
+  condition: []
+  action:
+  - service: notify.notify
+    data:
+      message: >-
+        Sekarang telah masuk waktu Solat {{ states.sensor.jakim_waktusekarang.state }}.
+      title: Solat Alert
+      data:
+        duration: 10
+        transparency: 0%
+  - service: tts.google_say
+    data:
+      entity_id: media_player.all_devices # Change to your own device name
+      message: >-
+        Sekarang telah masuk waktu {{ states.sensor.jakim_waktusekarang.state }}
+        bagi kawasan ini dan kawasan kawasan yang sama waktu dengannya.
+      language: id
+  - delay: 00:00:10
+  - service: media_player.play_media
+    data:
+      media_content_type: audio/mp3
+      media_content_id: media-source://media_source/local/audio/azan.mp3
+      #media_content_id: https://xxxx.duckdns.org/local/audio/azan.mp3 <-- you can also use direct URL if media-source doesnt work.
+    entity_id: media_player.all_devices # Change to your own device name
+  mode: single
+
+- id: '02'
+  alias: Adzan Subuh
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.jakim_subuh") == states("sensor.time")}}'
+  condition: []
+  action:
+  - service: tts.google_say
+    data:
+      entity_id: media_player.all_devices # Change to your own device name
+      message: >- 
+        Sekarang telah masuk waktu Subuh bagi kawasan ini dan kawasan kawasan
+        yang sama waktu dengannya.
+      language: id
+  - delay: 00:00:10
+  - service: media_player.play_media
+    data:
+      media_content_type: audio/mp3
+      media_content_id: media-source://media_source/local/audio/azansubuh.mp3
+      #media_content_id: https://xxxx.duckdns.org/local/audio/azansubuh.mp3 <-- you can also use direct URL if media-source doesnt work.      
+    entity_id: media_player.all_devices # Change to your own device name
+  mode: single
+
+- id: '03'
+  alias: Refresh JAKIM at 1:00am # Schedule update prayer time at 1AM daily. Feel free to adjust.
+  description: ''
+  trigger:
+  - platform: time
+    at: 01:00:00
+  condition: []
+  action:
+  - service: homeassistant.update_entity
+    target:
+      entity_id: sensor.jakim_waktu_solat_daily 
+  mode: single
