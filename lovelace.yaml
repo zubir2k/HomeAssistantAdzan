@@ -1,0 +1,21 @@
+# This is to show prayer time on your HA Lovelace dashboard.
+
+type: entities
+entities:
+  - entity: sensor.jakim_waktusekarang
+  - type: attribute
+    entity: sensor.jakim_subuh
+    attribute: time_12hours
+  - type: attribute
+    entity: sensor.jakim_zohor
+    attribute: time_12hours
+  - type: attribute
+    entity: sensor.jakim_asar
+    attribute: time_12hours
+  - type: attribute
+    entity: sensor.jakim_maghrib
+    attribute: time_12hours
+  - type: attribute
+    entity: sensor.jakim_isyak
+    attribute: time_12hours
+title: '🕋 Waktu Solat'
