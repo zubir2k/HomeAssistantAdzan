@@ -16,14 +16,6 @@
     value_template: '{{states("sensor.jakim_isyak") == states("sensor.time")}}'
   condition: []
   action:
-  - service: notify.notify
-    data:
-      message: >-
-        Sekarang telah masuk waktu Solat {{ states.sensor.jakim_waktusekarang.state }}.
-      title: Solat Alert
-      data:
-        duration: 10
-        transparency: 0%
   - service: tts.google_say
     data:
       entity_id: media_player.all_devices # Change to your own device name
