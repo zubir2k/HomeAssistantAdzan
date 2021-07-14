@@ -68,3 +68,47 @@
     target:
       entity_id: sensor.jakim_waktu_solat_daily 
   mode: single
+
+- id: '04'
+  alias: Azan Maghrib Reminder
+  description: ''
+  trigger:
+  - platform: template
+  value_template: >-
+    {{states("sensor.jakim_maghrib") == (as_local(now()).strftime("%s") | int +
+    (25*60)) | timestamp_custom("%H:%M", false)}} #the number 25 represent the minutes. Change it to your desired timing.
+  condition: []
+  action:
+  - service: tts.google_say
+    data:
+      message: It is 25 minutes before Maghrib! Get prepare.
+      entity_id: media_player.all_devices
+      language: en
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_type: audio/mp3
+      media_content_id: media-source://media_source/local/audio/alfatihah.mp3 #Kita mulakan dengan Ummul Kitab
+    entity_id: media_player.all_devices
+  - delay: #ikut pada timing mp3 alfatihah..
+      hours: 0
+      minutes: 0
+      seconds: 37
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_type: audio/mp3
+      media_content_id: |
+        {{ ["media-source://media_source/local/audio/surah1.mp3",
+            "media-source://media_source/local/audio/surah2.mp3",
+            "media-source://media_source/local/audio/surah3.mp3",
+            "media-source://media_source/local/audio/surah4.mp3",
+            ] | random }}
+      extra: #bacaan surah pilihan secara random. Gantikan dengan sumber audio mengikut keperluan anda.
+        title: Surah Pilihan 
+    entity_id: media_player.all_devices
+  mode: single
