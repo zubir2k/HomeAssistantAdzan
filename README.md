@@ -12,6 +12,7 @@ Copy 3 automations into your current automations.yaml
 - Adzan
 - Adzan Subuh
 - Daily refresh
+- Random verse of Al Quran audio playback (x) minute before Maghrib
 
 ### 3. [lovelace.yaml](lovelace.yaml)
 Add new entities card on your dashboard and paste the YAML codes.
