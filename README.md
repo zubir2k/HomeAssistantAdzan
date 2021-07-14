@@ -8,7 +8,7 @@ Prayer time data is pulled via API call from AzanPro (https://api.azanpro.com/).
 - Change the location code based on this list https://api.azanpro.com/zones
 
 ### 2. [automation.yaml](automations.yaml)
-Copy 3 automations into your current automations.yaml
+Copy 4 automations into your current automations.yaml
 - Adzan
 - Adzan Subuh
 - Daily refresh
