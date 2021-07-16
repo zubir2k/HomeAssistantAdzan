@@ -20,6 +20,10 @@ Copy 4 automations into your current automations.yaml
 - Daily refresh
 - Random verse of Al Quran audio playback (*x*) minute before Maghrib
 
+**Adzan:**\
+It is highly recommended to use speaker group (via Home Assistant) or from your Alexa or Google Home App.\
+Example use in this automation is *all_devices* `media_player.all_devices` 
+
 **Random verse:**\
 You may add/remove audio files depending on your preferences.\
 You can also use URL by changing the `media-source://media_source/local/audio/xxx.mp3`
