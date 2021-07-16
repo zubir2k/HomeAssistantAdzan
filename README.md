@@ -43,7 +43,7 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 Add new entities card on your dashboard and paste the YAML codes.
 
 ## MP3 Audio Files
-Copy 2 audio files into your /media/audio/
+Copy 2 audio files into your `/media/audio/`
 - azan.mp3
 - azansubuh.mp3
 
