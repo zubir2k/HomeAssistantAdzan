@@ -1,6 +1,7 @@
-# Malaysia prayer time based on JAKIM pull via REST from AzanPro
-# Change the location code based on this list https://api.azanpro.com/zones
+# Malaysia prayer time based on JAKIM Official API
+# Change the location code based on this list https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
 sensor:
+  ## Time Sensors ##
   - platform: time_date
     display_options:
       - 'time'
@@ -11,96 +12,98 @@ sensor:
       - 'time_date'
       - 'time_utc'
       - 'beat'
-  - platform: rest
-    resource: https://api.azanpro.com/times/today.json?zone=sgr01&format=24-hour # Change to your desired location by changing the location code sgr01
-    name: Jakim Waktu Solat Daily
-    json_attributes:
-      - zone
-      - prayer_times
-      - locations
-    value_template: '{{ value_json.zone }}'
   - platform: template
     sensors:
         time_formatted:
             friendly_name: "Date and time"
-            value_template: "{{ as_timestamp(states('sensor.date_time_iso')) | timestamp_custom('%A, %-d %B - %I:%M %p') }}"
-            icon_template: mdi:calendar-clock   
-        jakim_ha_date:
-            friendly_name: 'Jakim HA Date'
+            value_template: "{{ as_timestamp(states('sensor.date_time_iso')) | timestamp_custom('%A, %-d %B %Y - %I:%M %p') }}"
             icon_template: mdi:calendar-clock
-            value_template: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["date"], "%d-%m-%Y")) | timestamp_custom("%Y-%m-%d", true)}}'
-        jakim_date:
-            friendly_name: 'Jakim Date'
-            icon_template: mdi:calendar-clock
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["date"] }}'
-        jakim_timestamp:
-            friendly_name: 'Jakim Unix Timestamp'
-            icon_template: mdi:calendar-clock
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["datestamp"] }}'
-        jakim_imsak:
-            friendly_name: 'Imsak'
+        time_12hours:
+            friendly_name: "Time"
+            value_template: "{{ as_timestamp(states('sensor.date_time_iso')) | timestamp_custom('%I:%M %p') }}"
+            icon_template: mdi:clock
+  
+  ## Waktu Solat (JAKIM) ##
+  - platform: rest
+    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=SGR01
+    name: Jakim Official
+    json_attributes:
+      - zone
+      - prayerTime
+      - serverTime
+    value_template: '{{ value_json.zone }}'
+  - platform: template
+    sensors:
+        jakim_hijri:
+            friendly_name: "Hijri Date"
+            icon_template: mdi:calendar
+            value_template: '{{states.sensor.jakim_official.attributes.prayerTime[0].hijri}}'
+        jakim_hijri_full:
+            friendly_name: "Hijri Date Full"
+            icon_template: mdi:calendar
+            value_template: >
+              {% set months = ['Muharram', 'Safar', 'Rabi\'ul Awwal', 'Rabi\'ul Akhir', 'Jamadil Awwal', 'Jamadil Akhir', 'Rejab', 'Sha\'aban', 'Ramadhan', 'Syawwal', 'Zulkaedah', 'Zulhijjah'] %}
+              {{states.sensor.jakim_official.attributes.prayerTime[0].hijri[8:10]}} {{months[(states.sensor.jakim_official.attributes.prayerTime[0].hijri[5:7] | int)-1]}} {{states.sensor.jakim_official.attributes.prayerTime[0].hijri[0:4]}}h
+        esolat_imsak:
+            friendly_name: "Imsak"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["imsak"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].imsak, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["imsak"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_subuh:
-            friendly_name: 'Subuh'
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].imsak, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_subuh:
+            friendly_name: "Subuh"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["subuh"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].fajr, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["subuh"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_syuruk:
-            friendly_name: 'Syuruk'
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].fajr, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_syuruk:
+            friendly_name: "Syuruk"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["syuruk"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].syuruk, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["syuruk"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_zohor:
-            friendly_name: 'Zohor'
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].syuruk, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_zohor:
+            friendly_name: "Zohor"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["zohor"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].dhuhr, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["zohor"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_asar:
-            friendly_name: 'Asar'
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].dhuhr, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_asar:
+            friendly_name: "Asar"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["asar"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].asr, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["asar"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_maghrib:
-            friendly_name: 'Maghrib'
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].asr, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_maghrib:
+            friendly_name: "Maghrib"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["maghrib"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].maghrib, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["maghrib"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_isyak:
-            friendly_name: 'Isyak'
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].maghrib, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_isyak:
+            friendly_name: "Isyak"
             icon_template: mdi:islam
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["isyak"] }}'
+            value_template: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].isha, "%H:%M:%S")) | timestamp_custom("%I:%M %p", true)}}'
             attribute_templates: 
-                time_12hours: '{{as_timestamp(strptime(states.sensor.jakim_waktu_solat_daily.attributes["prayer_times"]["isyak"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
-        jakim_location:
-            friendly_name: 'Jakim Zone Location'
-            icon_template: mdi:map-marker
-            value_template: '{{ states.sensor.jakim_waktu_solat_daily.attributes["locations"] }}'
-        jakim_waktusekarang:
-            friendly_name: Waktu Sekarang
+                24hours: '{{as_timestamp(strptime(states.sensor.jakim_official.attributes.prayerTime[0].isha, "%H:%M:%S")) | timestamp_custom("%H:%M", true)}}'
+        esolat_waktusekarang:
+            friendly_name: "Waktu Sekarang"
             icon_template: mdi:islam
             value_template: >-
-                {% if states("sensor.time") >= states("sensor.jakim_imsak") and states("sensor.time") < states("sensor.jakim_subuh") %}
+                {% if states("sensor.time") >= state_attr("sensor.esolat_imsak", "24hours") and states("sensor.time") < state_attr("sensor.esolat_subuh", "24hours") %}
                 Imsak
-                {% elif states("sensor.time") >= states("sensor.jakim_subuh") and states("sensor.time") < states("sensor.jakim_syuruk") %}
+                {% elif states("sensor.time") >= state_attr("sensor.esolat_subuh", "24hours") and states("sensor.time") < state_attr("sensor.esolat_syuruk", "24hours") %}
                 Subuh
-                {% elif states("sensor.time") >= states("sensor.jakim_syuruk") and states("sensor.time") < states("sensor.jakim_zohor") %}
+                {% elif states("sensor.time") >= state_attr("sensor.esolat_syuruk", "24hours") and states("sensor.time") < state_attr("sensor.esolat_zohor", "24hours") %}
                 Syuruk
-                {% elif states("sensor.time") >= states("sensor.jakim_zohor") and states("sensor.time") < states("sensor.jakim_asar") %}
+                {% elif states("sensor.time") >= state_attr("sensor.esolat_zohor", "24hours") and states("sensor.time") < state_attr("sensor.esolat_asar", "24hours") %}
                 Zohor
-                {% elif states("sensor.time") >= states("sensor.jakim_asar") and states("sensor.time") < states("sensor.jakim_maghrib") %}
+                {% elif states("sensor.time") >= state_attr("sensor.esolat_asar", "24hours") and states("sensor.time") < state_attr("sensor.esolat_maghrib", "24hours") %}
                 Asar
-                {% elif states("sensor.time") >= states("sensor.jakim_maghrib") and states("sensor.time") < states("sensor.jakim_isyak") %}
+                {% elif states("sensor.time") >= state_attr("sensor.esolat_maghrib", "24hours") and states("sensor.time") < state_attr("sensor.esolat_isyak", "24hours") %}
                 Maghrib
-                {% elif states("sensor.time") >= states("sensor.jakim_isyak") %}
+                {% elif states("sensor.time") >= state_attr("sensor.esolat_isyak", "24hours") %}
                 Isyak
                 {%- else %}
-                -
+                Isyak
                 {%- endif %}
