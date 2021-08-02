@@ -7,20 +7,20 @@
   description: ''
   trigger:
   - platform: template
-    value_template: '{{states("sensor.jakim_zohor") == states("sensor.time")}}'
+    value_template: '{{state_attr("sensor.esolat_zohor", "24hours") == states("sensor.time")}}'
   - platform: template
-    value_template: '{{states("sensor.jakim_asar") == states("sensor.time")}}'
+    value_template: '{{state_attr("sensor.esolat_asar", "24hours") == states("sensor.time")}}'
   - platform: template
-    value_template: '{{states("sensor.jakim_maghrib") == states("sensor.time")}}'
+    value_template: '{{state_attr("sensor.esolat_maghrib", "24hours") == states("sensor.time")}}'
   - platform: template
-    value_template: '{{states("sensor.jakim_isyak") == states("sensor.time")}}'
+    value_template: '{{state_attr("sensor.esolat_isyak", "24hours") == states("sensor.time")}}'
   condition: []
   action:
-  - service: tts.google_say
+  - service: tts.google_say # May varies for Alexa users. Please change accordingly
     data:
       entity_id: media_player.all_devices # Change to your own device name
       message: >-
-        Sekarang telah masuk waktu {{ states.sensor.jakim_waktusekarang.state }}
+        Sekarang telah masuk waktu {{ states.sensor.esolat_waktusekarang.state }}
         bagi kawasan ini dan kawasan kawasan yang sama waktu dengannya.
       language: id
   - delay: 00:00:10
@@ -37,10 +37,10 @@
   description: ''
   trigger:
   - platform: template
-    value_template: '{{states("sensor.jakim_subuh") == states("sensor.time")}}'
+    value_template: '{{state_attr("sensor.esolat_subuh", "24hours") == states("sensor.time")}}'
   condition: []
   action:
-  - service: tts.google_say
+  - service: tts.google_say # May varies for Alexa users. Please change accordingly
     data:
       entity_id: media_player.all_devices # Change to your own device name
       message: >- 
@@ -57,25 +57,12 @@
   mode: single
 
 - id: '03'
-  alias: Refresh JAKIM at 1:00am # Schedule update prayer time at 1AM daily. Feel free to adjust.
-  description: ''
-  trigger:
-  - platform: time
-    at: 01:00:00
-  condition: []
-  action:
-  - service: homeassistant.update_entity
-    target:
-      entity_id: sensor.jakim_waktu_solat_daily 
-  mode: single
-
-- id: '04'
   alias: Azan Maghrib Reminder
   description: ''
   trigger:
   - platform: template
   value_template: >-
-    {{states("sensor.jakim_maghrib") == (as_local(now()).strftime("%s") | int +
+    {{states("state_attr("sensor.esolat_maghrib", "24hours") == (as_local(now()).strftime("%s") | int +
     (25*60)) | timestamp_custom("%H:%M", false)}} #the number 25 represent the minutes. Change it to your desired timing.
   condition: []
   action:
