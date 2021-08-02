@@ -1,21 +1,21 @@
 # This is to show prayer time on your HA Lovelace dashboard.
 
-type: entities
-entities:
-  - entity: sensor.jakim_waktusekarang
-  - type: attribute
-    entity: sensor.jakim_subuh
-    attribute: time_12hours
-  - type: attribute
-    entity: sensor.jakim_zohor
-    attribute: time_12hours
-  - type: attribute
-    entity: sensor.jakim_asar
-    attribute: time_12hours
-  - type: attribute
-    entity: sensor.jakim_maghrib
-    attribute: time_12hours
-  - type: attribute
-    entity: sensor.jakim_isyak
-    attribute: time_12hours
-title: '🕋 Waktu Solat'
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >-
+      <center><hr>Today is {{as_timestamp(states('sensor.date_time_iso')) |
+      timestamp_custom('%A, %-d %B %Y')}}<br />     
+      {{states.sensor.jakim_hijri_full.state}}
+
+      <h1>{{as_timestamp(strptime(states.sensor.time.state, "%H:%M")) |
+      timestamp_custom("%I:%M %p", true)}}</h1>
+
+      It is currently <b>{{states.sensor.esolat_waktusekarang.state}}</b><hr></center>
+  - type: glance
+    entities:
+      - entity: sensor.esolat_subuh
+      - entity: sensor.esolat_zohor
+      - entity: sensor.esolat_asar
+      - entity: sensor.esolat_maghrib
+      - entity: sensor.esolat_isyak
