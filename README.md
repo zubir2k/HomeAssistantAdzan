@@ -1,23 +1,22 @@
 # Home Assistant Adzan
-Automation for Malaysia Adzan (Muslim call to prayer) based on JAKIM standards.\
-Prayer time data is pulled via API call from AzanPro (https://api.azanpro.com/).
+Automation for Malaysia Adzan (Muslim call to prayer) based on JAKIM.\
+Prayer time data is pulled via JAKIM Official API (https://www.e-solat.gov.my).
 
 ## Installation
 ### 1. [configuration.yaml](configuration.yaml)
 - Copy the sensors to your current configuration.yaml.
-- Change the location code `sgr01` based on this list https://api.azanpro.com/zones
+- Change the location code `sgr01` based on this list https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
 
 ```yaml
   - platform: rest
-    resource: https://api.azanpro.com/times/today.json?zone=sgr01&format=24-hour
-    name: Jakim Waktu Solat Daily
+    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=SGR01
+    name: Jakim Official
 ```
 
 ### 2. [automation.yaml](automations.yaml)
-Copy 4 automations into your current automations.yaml
+Copy 3 automations into your current automations.yaml
 - Adzan
 - Adzan Subuh
-- Daily refresh
 - Random verse of Al Quran audio playback (*x*) minute before Maghrib
 
 **Adzan:**\
@@ -41,6 +40,8 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 
 ### 3. [lovelace.yaml](lovelace.yaml)
 Add new entities card on your dashboard and paste the YAML codes.
+
+![image](https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/lovelace-card.png)
 
 ## MP3 Audio Files
 Copy 2 audio files into your `/media/audio/`
