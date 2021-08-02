@@ -61,9 +61,8 @@
   description: ''
   trigger:
   - platform: template
-  value_template: >-
-    {{states("state_attr("sensor.esolat_maghrib", "24hours") == (as_local(now()).strftime("%s") | int +
-    (25*60)) | timestamp_custom("%H:%M", false)}} #the number 25 represent the minutes. Change it to your desired timing.
+    value_template: {{state_attr("sensor.esolat_maghrib", "24hours") == (as_local(now()).strftime("%s") | int + (25*60)) | timestamp_custom("%H:%M", false)}}
+    # the number 25 in int + (25*60) represent the minutes. Change it to your desired timing.
   condition: []
   action:
   - service: tts.google_say
