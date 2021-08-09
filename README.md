@@ -44,7 +44,7 @@ Add new entities card on your dashboard and paste the YAML codes.
 ![image](https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/lovelace-card.png)
 
 ## MP3 Audio Files
-Copy 2 audio files into your `/media/audio/`
+Copy 2 audio files into your `/media/audio/` OR `/config/www/audio`
 - azan.mp3
 - azansubuh.mp3
 
