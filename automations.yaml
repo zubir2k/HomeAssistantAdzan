@@ -1,5 +1,5 @@
 # There are 2 automation for adzan; 1 is for Subuh, 2 is for the rest of the prayer time (Zohor, Asar, Maghrib, Isyak)
-# Place the adzan audio mp3 files to path /media/audio
+# Place the adzan audio mp3 files to path /media/audio OR /config/www/audio
 # Change the media_player entity id to your device name. 
 
 - id: '01'
