@@ -48,6 +48,9 @@ Copy 2 audio files into your `/media/audio/` OR `/config/www/audio`
 - azan.mp3
 - azansubuh.mp3
 
+## In-depth Video Tutorial
+- https://youtu.be/DZGJwaeQuGA
+
 ## Special Thanks
 - [@farxpeace](https://github.com/farxpeace) - for the original code
 - [HomeAssistantMalaysia](https://www.facebook.com/groups/homeassistantmalaysia)
