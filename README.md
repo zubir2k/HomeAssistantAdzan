@@ -1,4 +1,4 @@
-# Home Assistant Adzan
+# Home Assistant Adzan ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
 Automation for Malaysia Adzan (Muslim call to prayer) based on JAKIM.\
 Prayer time data is pulled via JAKIM Official API (https://www.e-solat.gov.my).
 
