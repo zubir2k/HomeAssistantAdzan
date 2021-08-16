@@ -9,7 +9,7 @@ Prayer time data is pulled via JAKIM Official API (https://www.e-solat.gov.my).
 
 ```yaml
   - platform: rest
-    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=SGR01
+    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=<location code>
     name: Jakim Official
 ```
 
