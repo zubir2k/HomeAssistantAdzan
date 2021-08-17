@@ -25,7 +25,7 @@ sensor:
   
   ## Waktu Solat (JAKIM) ##
   - platform: rest
-    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=SGR01 #Change SGR01 to your desired state code.
+    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&datetype=miladi&zone=SGR01 #Change SGR01 to your desired state code.
     name: Jakim Official
     json_attributes:
       - zone
