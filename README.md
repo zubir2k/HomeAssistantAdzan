@@ -1,16 +1,27 @@
 # Home Assistant Adzan ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
-Automation for Malaysia Adzan (Muslim call to prayer) based on JAKIM.\
-Prayer time data is pulled via JAKIM Official API (https://www.e-solat.gov.my).
+Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
+- JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
+- AzanPro (in separate folder) - [Website](https://api.azanpro.com).
 
 ## Installation
 ### 1. [configuration.yaml](configuration.yaml)
 - Copy the sensors to your current configuration.yaml.
-- Change the location code `sgr01` based on this list https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
+- Change the location code `<location code>` based on location/zone list
 
+**eSolat**\
+https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
 ```yaml
   - platform: rest
     resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=<location code>
     name: Jakim Official
+```
+
+**AzanPro**\
+https://api.azanpro.com/zones
+```yaml
+  - platform: rest
+    resource: https://api.azanpro.com/times/today.json?zone=<location code>&format=24-hour
+    name: AzanPro API
 ```
 
 ### 2. [automation.yaml](automations.yaml)
