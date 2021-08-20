@@ -1,7 +1,7 @@
 # Home Assistant Adzan ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
-- AzanPro (in separate folder) - [Website](https://api.azanpro.com).
+- AzanPro (in separate [folder](https://github.com/zubir2k/HomeAssistantAdzan/tree/main/azanpro)) - [Website](https://api.azanpro.com).
 
 ## Installation
 ### 1. [configuration.yaml](configuration.yaml)
