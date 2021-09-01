@@ -60,7 +60,8 @@ Copy 2 audio files into your `/media/audio/` OR `/config/www/audio`
 - azansubuh.mp3
 
 ## In-depth Video Tutorial
-- https://youtu.be/DZGJwaeQuGA
+- Automation Adzan using Home Assistant: https://youtu.be/DZGJwaeQuGA
+- Beginners Guide to Home Assistant: https://youtu.be/-jyegp-mL20 
 
 ## Special Thanks
 - [@farxpeace](https://github.com/farxpeace) - for the original code
