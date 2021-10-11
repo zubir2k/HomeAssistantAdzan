@@ -49,6 +49,12 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
             ] | random }}
 ```
 
+### 2(a). [automation_alexa.yaml](automation_alexa.yaml) -- For Alexa Devices
+- **IMPORTANT**: Please ensure [Alexa_Media](https://github.com/custom-components/alexa_media_player) addon has been configured.
+- Audio files must be placed at /config/www/audio
+- The audio file must be formatted in 84kbps bitrate (refer to example audio azan_alexa.mp3).
+- Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS)
+
 ### 3. [lovelace.yaml](lovelace.yaml)
 Add new entities card on your dashboard and paste the YAML codes.
 
@@ -58,6 +64,7 @@ Add new entities card on your dashboard and paste the YAML codes.
 Copy 2 audio files into your `/media/audio/` OR `/config/www/audio`
 - azan.mp3
 - azansubuh.mp3
+- azan_alexa.mp3
 
 ## In-depth Video Tutorial
 - Automation Adzan using Home Assistant: https://youtu.be/DZGJwaeQuGA
