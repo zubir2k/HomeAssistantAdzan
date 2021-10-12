@@ -59,13 +59,18 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 - Sample rate: 22050Hz, 24000Hz, or 16000Hz
 - Duration: Cannot exceed 4min (240sec)
 
+### 2(b). Raspberry Pi Audio
+- Ensure VLC is installed. For HA hosted in a RaspberryPi, you may use [Local-VLC](https://github.com/rodripf/hassio-local-vlc) addon.
+- Ensure official [VLC Media Player](https://www.home-assistant.io/integrations/vlc_telnet) integration is configured.
+- **IMPORTANT**: All audio files must be stored in ``/share/audio``
+
 ### 3. [lovelace.yaml](lovelace.yaml)
 Add new entities card on your dashboard and paste the YAML codes.
 
 ![image](https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/lovelace-card.png)
 
 ## MP3 Audio Files
-Copy 2 audio files into your `/media/audio/` OR `/config/www/audio`
+Copy 2 audio files into your `/media/audio/` OR `/config/www/audio` OR `/share/audio`
 - azan.mp3
 - azansubuh.mp3
 - azan_alexa.mp3
