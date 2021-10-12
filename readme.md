@@ -69,6 +69,7 @@ Copy 2 audio files into your `/media/audio/` OR `/config/www/audio`
 - azan.mp3
 - azansubuh.mp3
 - azan_alexa.mp3
+- azansubuh_alexa.mp3
 
 ## In-depth Video Tutorial
 - Automation Adzan using Home Assistant: https://youtu.be/DZGJwaeQuGA
