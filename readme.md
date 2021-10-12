@@ -52,8 +52,12 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 ### 2(a). [automation_alexa.yaml](automation_alexa.yaml) -- For Alexa Devices
 - **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
 - Audio files must be placed at /config/www/audio
-- The audio file must be formatted in 84kbps bitrate (refer to example audio azan_alexa.mp3).
 - Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS)
+
+**Audio requirements:**
+- Bit rate: 48kbps
+- Sample rate: 22050Hz, 24000Hz, or 16000Hz
+- Duration: Cannot exceed 4min (240sec)
 
 ### 3. [lovelace.yaml](lovelace.yaml)
 Add new entities card on your dashboard and paste the YAML codes.
