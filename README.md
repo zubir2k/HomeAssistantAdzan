@@ -24,7 +24,7 @@ https://api.azanpro.com/zones
     name: AzanPro API
 ```
 
-### 2. [automation.yaml](automations.yaml)
+### 2. [automations.yaml](automations.yaml)
 Copy 3 automations into your current automations.yaml
 - Adzan
 - Adzan Subuh
@@ -49,7 +49,7 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
             ] | random }}
 ```
 
-### 2(a). [automation_alexa.yaml](automation_alexa.yaml) -- For Alexa Devices
+### 2(a). [automations_alexa.yaml](automations_alexa.yaml) -- For Alexa Devices
 - **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
 - Audio files must be placed at /config/www/audio
 - Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS)
