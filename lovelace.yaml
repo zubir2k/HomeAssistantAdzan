@@ -4,14 +4,12 @@ type: vertical-stack
 cards:
   - type: markdown
     content: >-
-      <center><hr>Today is {{as_timestamp(states('sensor.date_time_iso')) |
-      timestamp_custom('%A, %-d %B %Y')}}<br />     
-      {{states.sensor.jakim_hijri_full.state}}
+      <center><hr>Today is {{now().strftime('%A, %-d %B %Y')}}<br />     
+      {{states("sensor.jakim_hijri_full")}}
 
-      <h1>{{as_timestamp(strptime(states.sensor.time.state, "%H:%M")) |
-      timestamp_custom("%I:%M %p", true)}}</h1>
+      <h1>{{now().strftime("%I:%M %p")}}</h1>
 
-      It is currently <b>{{states.sensor.esolat_waktusekarang.state}}</b><hr></center>
+      It is currently <b>{{states("sensor.esolat_waktusekarang")}}</b><hr></center>
   - type: glance
     entities:
       - entity: sensor.esolat_subuh
