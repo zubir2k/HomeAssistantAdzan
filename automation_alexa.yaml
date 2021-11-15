@@ -1,0 +1,29 @@
+# IMPORTANT: Please ensure Alexa_Media addon has been configured.
+# Audio files must be placed at /config/www/audio
+# Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS)
+
+- id: '01'
+  alias: Adzan Alexa
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{state_attr("sensor.solat_subuh", "24hours") == now().strftime("%H:%M")}}'  
+  - platform: template
+    value_template: '{{state_attr("sensor.solat_zohor", "24hours") == now().strftime("%H:%M")}}'
+  - platform: template
+    value_template: '{{state_attr("sensor.solat_asar", "24hours") == now().strftime("%H:%M")}}'
+  - platform: template
+    value_template: '{{state_attr("sensor.solat_maghrib", "24hours") == now().strftime("%H:%M")}}'
+  - platform: template
+    value_template: '{{state_attr("sensor.solat_isyak", "24hours") == now().strftime("%H:%M")}}'
+  condition: []
+  action:
+  - service: notify.alexa_media
+    data:
+      message: >- 
+        It is now {{states('sensor.solat_sekarang')}}. Perform your solah. <audio src='https://xxxx.duckdns.org/local/audio/{%if
+        states('sensor.solat_sekarang') == 'Subuh'%}azansubuh{%else%}azan{%endif%}_alexa.mp3'/>
+      target: media_player.echo_device #change to your own Alexa device name
+      data: 
+        type: tts
+  mode: single
