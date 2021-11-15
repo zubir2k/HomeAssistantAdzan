@@ -2,6 +2,7 @@
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
 - AzanPro - [Website](https://api.azanpro.com).
+- Aladhan (for Hijri Dates) - [Website](https://aladhan.com/islamic-calendar-api)
 
 **Whats New in 3.0**
 - Source and location can be entered using input text and input select.
