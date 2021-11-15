@@ -35,7 +35,7 @@ https://api.azanpro.com/zones
 ### 2. [automation.yaml](automation.yaml)
 Copy the automations into your current automations.yaml
 - Azan 3.0
-- Azan 3.0 Yearly Update
+- Azan 3.0 Yearly Update (you need to run it once for the initial setup)
 
 ![image](https://user-images.githubusercontent.com/1905339/141753839-1d9b3570-331e-4e3c-a487-572adc47e7cc.png)
 
