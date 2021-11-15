@@ -19,6 +19,7 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
   2. Input Select (for source selection)
   3. Input Text (for state/location code
   4. Load solat sensors
+- Copy esolat.yaml into `/config`
 - Reboot your Home Assistant to take effect.
 - Once rebooted, perform the following:
   1. Enter your location code `input_text.solat` based on location/zone list
@@ -31,7 +32,7 @@ https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
 **AzanPro**\
 https://api.azanpro.com/zones
 
-### 2. [automations.yaml](automations.yaml)
+### 2. [automation.yaml](automation.yaml)
 Copy the automations into your current automations.yaml
 - Azan 3.0
 - Azan 3.0 Yearly Update
