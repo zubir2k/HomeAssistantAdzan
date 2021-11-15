@@ -1,34 +1,41 @@
-# Home Assistant Adzan ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
+# Home Assistant Adzan 3.0 ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
-- AzanPro (in separate [folder](https://github.com/zubir2k/HomeAssistantAdzan/tree/main/azanpro)) - [Website](https://api.azanpro.com).
+- AzanPro - [Website](https://api.azanpro.com).
+
+**Whats New in 3.0**
+- Source and location can be entered using input text and input select.
+- Easily change sources if one failed (i.e. Timeout)
+- Solat data can be stored locally and use as source. 
+
+![image](https://user-images.githubusercontent.com/1905339/141753194-579d9190-969f-4029-bf6c-92d7fdd65ab2.png)
 
 ## Installation
 ### 1. [configuration.yaml](configuration.yaml)
-- Copy the sensors to your current configuration.yaml.
-- Change the location code `<location code>` based on location/zone list
+- Copy the lines into your configuration.yaml.
+- It will enable/create the following:
+  1. Downloader
+  2. Input Select (for source selection)
+  3. Input Text (for state/location code
+  4. Load solat sensors
+- Reboot your Home Assistant to take effect.
+- Once rebooted, perform the following:
+  1. Enter your location code `input_text.solat` based on location/zone list
+  2. Enter your Home Assistant URL in `input_text.homeurl`
+  3. Select source (eSolat/AzanPro/Local)
 
 **eSolat**\
 https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
-```yaml
-  - platform: rest
-    resource: https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=<location code>
-    name: Jakim Official
-```
 
 **AzanPro**\
 https://api.azanpro.com/zones
-```yaml
-  - platform: rest
-    resource: https://api.azanpro.com/times/today.json?zone=<location code>&format=24-hour
-    name: AzanPro API
-```
 
 ### 2. [automations.yaml](automations.yaml)
-Copy 3 automations into your current automations.yaml
-- Adzan
-- Adzan Subuh
-- Random verse of Al Quran audio playback (*x*) minute before Maghrib
+Copy the automations into your current automations.yaml
+- Azan 3.0
+- Azan 3.0 Yearly Update
+
+![image](https://user-images.githubusercontent.com/1905339/141753839-1d9b3570-331e-4e3c-a487-572adc47e7cc.png)
 
 **Adzan:**\
 It is highly recommended to use speaker group (via Home Assistant) or from your Alexa or Google Home App.\
@@ -67,7 +74,7 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 ### 3. [lovelace.yaml](lovelace.yaml)
 Add new entities card on your dashboard and paste the YAML codes.
 
-![image](https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/lovelace-card.png)
+![image](https://user-images.githubusercontent.com/1905339/141753688-0944797d-cd20-430e-97a7-104ebc010a4f.png)
 
 ## MP3 Audio Files
 Copy 2 audio files into your `/media/audio/` OR `/config/www/audio` OR `/share/audio`
