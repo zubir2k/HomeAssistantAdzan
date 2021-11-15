@@ -1,0 +1,126 @@
+# Malaysia prayer time based on AzanPro API
+# Change the location code based on this list https://api.azanpro.com/zones
+sensor:
+  ## Time Sensors ##
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'date_time_utc'
+      - 'date_time_iso'
+      - 'time_date'
+      - 'time_utc'
+      - 'beat'
+  - platform: template
+    sensors:
+        time_formatted:
+            friendly_name: "Date and time"
+            value_template: "{{ as_timestamp(states('sensor.date_time_iso')) | timestamp_custom('%A, %-d %B %Y - %I:%M %p') }}"
+            icon_template: mdi:calendar-clock
+        time_12hours:
+            friendly_name: "Time"
+            value_template: "{{ as_timestamp(states('sensor.date_time_iso')) | timestamp_custom('%I:%M %p') }}"
+            icon_template: mdi:clock
+
+## Hijri Date API ##
+  - platform: rest
+    resource_template: "http://api.aladhan.com/v1/gToH?date={{ now().strftime('%d-%m-%Y') }}"
+    name: HijriDate API
+    json_attributes_path: "$.data.hijri"
+    json_attributes:
+      - day
+      - month
+      - year
+      - holiday
+    value_template: '{{ value_json.data.hijri.date }}'
+  - platform: template
+    sensors:
+        hijri_full:
+            friendly_name: "Hijri Date Full"
+            icon_template: mdi:calendar
+            value_template: >-
+              {{ states.sensor.hijridate_api.attributes["day"] + " " + states.sensor.hijridate_api.attributes["month"]["en"] + " " + states.sensor.hijridate_api.attributes["year"] }}h
+
+  ## Waktu Solat (AzanPRO) ##
+  - platform: rest
+    resource: https://api.azanpro.com/times/today.json?zone=sgr01&format=24-hour # Change sgr01 to your desired location
+    name: AzanPro API
+    json_attributes:
+      - zone
+      - prayer_times
+      - locations
+    value_template: '{{ value_json.zone }}'
+  - platform: template
+    sensors:
+        azanpro_imsak:
+            friendly_name: 'Imsak'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["imsak"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["imsak"] }}'
+        azanpro_subuh:
+            friendly_name: 'Subuh'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["subuh"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["subuh"] }}'
+        azanpro_syuruk:
+            friendly_name: 'Syuruk'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["syuruk"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["syuruk"] }}'
+        azanpro_zohor:
+            friendly_name: 'Zohor'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["zohor"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["zohor"] }}'
+        azanpro_asar:
+            friendly_name: 'Asar'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["asar"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["asar"] }}'
+        azanpro_maghrib:
+            friendly_name: 'Maghrib'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["maghrib"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["maghrib"] }}'
+        azanpro_isyak:
+            friendly_name: 'Isyak'
+            icon_template: mdi:islam
+            value_template: '{{as_timestamp(strptime(states.sensor.azanpro_api.attributes["prayer_times"]["isyak"], "%H:%M")) | timestamp_custom("%I:%M %p", true)}}'
+            attribute_templates: 
+                24hours: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["isyak"] }}'
+        azanpro_location:
+            friendly_name: 'AzanPro Location'
+            icon_template: mdi:map
+            value_template: '{{ states.sensor.azanpro_api.attributes["locations"] }}'
+        azanpro_date:
+            friendly_name: 'AzanPro Date'
+            icon_template: mdi:calendar
+            value_template: '{{ states.sensor.azanpro_api.attributes["prayer_times"]["date"] }}'
+        azanpro_waktusekarang:
+            friendly_name: "Waktu Sekarang"
+            icon_template: mdi:islam
+            value_template: >-
+                {% if states("sensor.time") >= state_attr("sensor.azanpro_imsak", "24hours") and states("sensor.time") < state_attr("sensor.azanpro_subuh", "24hours") %}
+                Imsak
+                {% elif states("sensor.time") >= state_attr("sensor.azanpro_subuh", "24hours") and states("sensor.time") < state_attr("sensor.azanpro_syuruk", "24hours") %}
+                Subuh
+                {% elif states("sensor.time") >= state_attr("sensor.azanpro_syuruk", "24hours") and states("sensor.time") < state_attr("sensor.azanpro_zohor", "24hours") %}
+                Syuruk
+                {% elif states("sensor.time") >= state_attr("sensor.azanpro_zohor", "24hours") and states("sensor.time") < state_attr("sensor.azanpro_asar", "24hours") %}
+                Zohor
+                {% elif states("sensor.time") >= state_attr("sensor.azanpro_asar", "24hours") and states("sensor.time") < state_attr("sensor.azanpro_maghrib", "24hours") %}
+                Asar
+                {% elif states("sensor.time") >= state_attr("sensor.azanpro_maghrib", "24hours") and states("sensor.time") < state_attr("sensor.azanpro_isyak", "24hours") %}
+                Maghrib
+                {% elif states("sensor.time") >= state_attr("sensor.azanpro_isyak", "24hours") %}
+                Isyak
+                {%- else %}
+                Isyak
+                {%- endif %}
