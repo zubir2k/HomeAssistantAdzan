@@ -1,0 +1,47 @@
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >-
+      ***
+
+      <center>Assamualaikum {{user}}
+
+
+      Today is {{now().strftime('%A, %-d %B %Y')}}
+
+      {{states("sensor.hijridate")}}
+
+
+      # {{now().strftime("%-I:%M %p")}}
+
+
+      It is currently **{{states("sensor.solat_sekarang")}}**
+
+      (*updated {{relative_time(states.sensor.solat_sekarang.last_changed)}}
+      ago*)</center>
+
+      ***
+  - type: glance
+    entities:
+      - entity: sensor.solat_subuh
+      - entity: sensor.solat_zohor
+      - entity: sensor.solat_asar
+      - entity: sensor.solat_maghrib
+      - entity: sensor.solat_isyak
+      
+type: entities
+entities:
+  - entity: sensor.solat_imsak
+  - entity: sensor.solat_subuh
+  - entity: sensor.solat_syuruk
+  - entity: sensor.solat_zohor
+  - entity: sensor.solat_asar
+  - entity: sensor.solat_maghrib
+  - entity: sensor.solat_isyak
+  - type: section
+  - entity: input_select.solat
+  - entity: input_text.solat
+  - entity: input_text.homeurl
+view_layout:
+  position: sidebar
+title: 🕋 Waktu Solat
