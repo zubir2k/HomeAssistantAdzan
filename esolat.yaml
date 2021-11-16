@@ -200,7 +200,7 @@
         {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_zohor", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_asar", "24hours")%}Zohor
         {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_asar", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_maghrib", "24hours")%}Asar
         {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_maghrib", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_isyak", "24hours")%}Maghrib
-        {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_isyak", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_imsak", "24hours")%}Isyak
+        {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_isyak", "24hours")%}Isyak
         {%else%}Isyak
         {%endif%}
       attribute_templates:
@@ -211,7 +211,8 @@
           {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_zohor", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_asar", "24hours")%}{{state_attr("sensor.solat_zohor", "24hours")}}
           {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_asar", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_maghrib", "24hours")%}{{state_attr("sensor.solat_asar", "24hours")}}
           {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_maghrib", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_isyak", "24hours")%}{{state_attr("sensor.solat_maghrib", "24hours")}}
-          {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_isyak", "24hours") and now().strftime("%H:%M") < state_attr("sensor.solat_imsak", "24hours")%}{{state_attr("sensor.solat_isyak", "24hours")}}
+          {%elif now().strftime("%H:%M") >= state_attr("sensor.solat_isyak", "24hours")%}{{state_attr("sensor.solat_isyak", "24hours")}}
+          {%else%}{{state_attr("sensor.solat_isyak", "24hours")}}
           {%endif%}
         source: >-
           {%if is_state("input_select.solat", "eSolat")%}eSolat
