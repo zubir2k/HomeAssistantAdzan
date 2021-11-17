@@ -3,7 +3,7 @@
 
 ## Hijri Date API ##
 - platform: rest
-  resource_template: "http://api.aladhan.com/v1/gToH?date={{ now().strftime('%d-%m-%Y') }}"
+  resource_template: "http://api.aladhan.com/v1/gToH?adjustment=1&date={{ now().strftime('%d-%m-%Y') }}"
   name: HijriDate API
   json_attributes_path: "$.data.hijri"
   json_attributes:
@@ -20,7 +20,7 @@
       icon_template: mdi:calendar
       value_template: >-
         {% set months = ["Muharram", "Safar", "Rabi\'ul Awwal", "Rabi\'ul Akhir", "Jamadil Awwal", "Jamadil Akhir", "Rejab", "Sha\'aban", "Ramadhan", "Syawal", "Zulkaedah", "Zulhijjah"] %}
-        {{ state_attr("sensor.hijridate_api", "day") + " " + months[state_attr("sensor.hijridate_api", "month").number] + " " + state_attr("sensor.hijridate_api", "year") + "h" }}
+        {{ state_attr("sensor.hijridate_api", "day") + " " + months[state_attr("sensor.hijridate_api", "month").number-1] + " " + state_attr("sensor.hijridate_api", "year") + "h" }}
 
 ## Solat API ##
 - platform: rest
