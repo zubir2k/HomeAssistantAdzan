@@ -1,5 +1,6 @@
 ## Malaysia prayer time based on JAKIM Official API
 ## Version 3.0 - Location and source can be selected from input_select and input_text. 
+## IMPORTANT NOTE: NO CHANGES IS REQUIRED TO THIS FILE. CONFIGURATION IS SET AT INPUT TEXT AND INPUT SELECT.
 
 ## Hijri Date API ##
 - platform: rest
