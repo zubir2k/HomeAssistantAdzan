@@ -19,7 +19,7 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
   2. Input Select (for source selection)
   3. Input Text (for state/location code
   4. Load solat sensors
-- Copy [esolat.yaml](esolat.yaml) into `/config`
+- Copy [esolat.yaml](esolat.yaml) into `/config`. **DO NOT ALTER THIS FILE**
 - Reboot your Home Assistant to take effect.
 - Once rebooted, perform the following:
   1. Enter your location code `input_text.solat` based on location/zone list
