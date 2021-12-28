@@ -61,7 +61,8 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 ### 2(a). [automation_alexa.yaml](automation_alexa.yaml) -- For Alexa Devices
 - **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
 - Audio files must be placed at /config/www/audio
-- Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS)
+- Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS) -- tested to work on Cloudflare SSL
+- [Alexa Documentation](https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html#audio)
 
 **Audio requirements:**
 - Bit rate: 48kbps
