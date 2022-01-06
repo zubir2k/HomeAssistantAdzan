@@ -35,7 +35,8 @@ https://api.azanpro.com/zones
 ### 2. [automation.yaml](automation.yaml)
 Copy the automations into your current automations.yaml
 - Azan 3.0
-- Azan 3.0 Yearly Update (you need to run it once for the initial setup)
+- Azan 3.0 Yearly Update \
+  (you need to run it once for the initial setup. It will save a esolat.json file into your ``/www/`` path)
 
 ![image](https://user-images.githubusercontent.com/1905339/141753839-1d9b3570-331e-4e3c-a487-572adc47e7cc.png)
 
@@ -60,7 +61,7 @@ You can also use URL by changing the `media-source://media_source/local/audio/xx
 
 ### 2(a). [automation_alexa.yaml](automation_alexa.yaml) -- For Alexa Devices
 - **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
-- Audio files must be placed at /config/www/audio
+- Audio files must be placed at ``/config/www/audio``
 - Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS) -- tested to work on Cloudflare SSL
 - [Alexa Documentation](https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html#audio)
 
