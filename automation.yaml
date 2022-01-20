@@ -119,3 +119,42 @@ action:
       milliseconds: 0
   - service: rest.reload
 mode: single
+
+alias: Azan 3.0 - Maghrib Reminder
+description: ''
+trigger:
+  - platform: template
+    value_template: >-
+      {{ state_attr("sensor.solat_maghrib", "24hours") == (now().strftime("%s")
+      | int + (15*60)) | timestamp_custom("%H:%M", false) }}
+condition: []
+action:
+  - service: tts.google_say
+    data:
+      entity_id: media_player.all_devices #Change this accordingly
+      message: It is 15 minutes before Maghrib. Get prepare.
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id:
+        - media_player.all_devices #Change this accordingly
+    data:
+      media_content_id: https://xxxx.duckdns.org/local/audio/surah/alfatihah.mp3
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 37
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id:
+        - media_player.all_devices #Change this accordingly
+    data:
+      media_content_id: >-
+        https://xxxx.duckdns.org/local/audio/surah/{{ ["almulk.mp3",
+        "assajadah.mp3", "arrahman.mp3",] | random }}
+mode: single
