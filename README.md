@@ -8,6 +8,9 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 - Source and location can be entered using input text and input select.
 - Easily change sources if one failed (i.e. Timeout)
 - Solat data can be stored locally and use as source. 
+- Added Persistent Notification as default notification.
+
+![image](https://user-images.githubusercontent.com/1905339/154905774-b63319d5-4b4b-46e5-9fab-8efdeeb10400.png)
 
 ![image](https://user-images.githubusercontent.com/1905339/141753194-579d9190-969f-4029-bf6c-92d7fdd65ab2.png)
 
