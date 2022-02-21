@@ -18,9 +18,14 @@ action:
                 🕋 Sekarang telah masuk waktu
                 {{states("sensor.solat_sekarang")}} bagi kawasan ini dan
                 kawasan yang sama waktu dengannya.
-          - service: notify.persistent_notification
+          - service: persistent_notification.create
             data:
-              message: Sekarang telah masuk waktu {{states("sensor.solat_sekarang")}}
+              message: >-
+                {{ now().strftime("%-I:%M %p") }} - Sekarang telah masuk waktu
+                {{states("sensor.solat_sekarang")}} bagi kawasan ini dan kawasan yang
+                sama waktu dengannya.
+              notification_id: esolat_azan
+              title: 🕋 eSolat - Waktu {{states("sensor.solat_sekarang")}}
           - service: tts.google_say
             data:
               entity_id: media_player.all_devices #Change this accordingly
@@ -71,9 +76,14 @@ action:
                 🕋 Sekarang telah masuk waktu
                 {{states("sensor.solat_sekarang")}} bagi kawasan ini dan
                 kawasan yang sama waktu dengannya.
-          - service: notify.persistent_notification
+          - service: persistent_notification.create
             data:
-              message: Sekarang telah masuk waktu {{states("sensor.solat_sekarang")}}
+              message: >-
+                {{ now().strftime("%-I:%M %p") }} - Sekarang telah masuk waktu
+                {{states("sensor.solat_sekarang")}} bagi kawasan ini dan kawasan yang
+                sama waktu dengannya.
+              notification_id: esolat_azan
+              title: 🕋 eSolat - Waktu {{states("sensor.solat_sekarang")}}
           - service: tts.google_say
             data:
               entity_id: media_player.all_devices #Change this accordingly
@@ -92,9 +102,14 @@ action:
             target:
               entity_id: media_player.all_devices #Change this accordingly
     default:
-      - service: notify.persistent_notification
+      - service: persistent_notification.create
         data:
-          message: Waktu {{states("sensor.solat_sekarang")}}.
+          message: >-
+            {{ now().strftime("%-I:%M %p") }} - Sekarang telah masuk waktu
+            {{states("sensor.solat_sekarang")}} bagi kawasan ini dan kawasan yang
+            sama waktu dengannya.
+          notification_id: esolat_azan
+          title: 🕋 eSolat - Waktu {{states("sensor.solat_sekarang")}}
 mode: single
 
 alias: Azan 3.0 Yearly Update
