@@ -13,7 +13,8 @@
     - year
     - holiday
   value_template: "{{ value_json.data.hijri.date }}"
-  
+
+## Hijri Date Sensor ##
 - platform: template
   sensors:
     hijridate:
@@ -21,8 +22,18 @@
       icon_template: mdi:calendar
       value_template: >-
         {% set months = ["Muharram", "Safar", "Rabi\'ul Awwal", "Rabi\'ul Akhir", "Jamadil Awwal", "Jamadil Akhir", "Rejab", "Sha\'aban", "Ramadhan", "Syawal", "Zulkaedah", "Zulhijjah"] %}
-        {{ state_attr("sensor.hijridate_api", "day") + " " + months[state_attr("sensor.hijridate_api", "month").number-1] + " " + state_attr("sensor.hijridate_api", "year") + "h" }}
-
+        {% set yearday = now().strftime("%j") | int %} 
+        {%if is_state("input_select.solat", "eSolat")%}{{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[8:10] }} {{ months[(state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[5:7] | int)-1] }} {{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[0:4] }}h
+        {%elif is_state("input_select.solat", "AzanPro")%}{{ state_attr("sensor.hijridate_api", "day") + " " + months[state_attr("sensor.hijridate_api", "month").number-1] + " " + state_attr("sensor.hijridate_api", "year") + "h" }}
+        {%elif is_state("input_select.solat", "Local")%}{{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[8:10] }} {{ months[(state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[5:7] | int)-1] }} {{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[0:4] }}h
+        {%endif%}
+      attribute_templates: 
+        source: >-
+          {%if is_state("input_select.solat", "eSolat")%}eSolat
+          {%elif is_state("input_select.solat", "AzanPro")%}AzanPro
+          {%elif is_state("input_select.solat", "Local")%}Local
+          {%endif%}
+          
 ## Solat API ##
 - platform: rest
   name: solat_local
