@@ -1,7 +1,7 @@
 # Home Assistant Adzan 3.0 ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
-- AzanPro - [Website](https://api.azanpro.com).
+- <s>AzanPro - [Website](https://api.azanpro.com)</s>. <- This source no longer work!
 - Aladhan (for Hijri Dates) - [Website](https://aladhan.com/islamic-calendar-api)
 
 **Whats New in 3.0**
@@ -9,6 +9,8 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 - Easily change sources if one failed (i.e. Timeout)
 - Solat data can be stored locally and use as source. 
 - Added Persistent Notification as default notification.
+
+You may also try [GPS Based](https://gist.github.com/zubir2k/04a3180f50f621c5840bbdc477d0027f) Solat sensor. (API provided by MPT)
 
 ![image](https://user-images.githubusercontent.com/1905339/154905774-b63319d5-4b4b-46e5-9fab-8efdeeb10400.png)
 
