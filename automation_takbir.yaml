@@ -131,3 +131,37 @@ action:
     target:
       entity_id: media_player.all_devices          
 mode: single
+
+alias: Doa Pagi on Sunrise
+description: ''
+trigger:
+  - platform: template
+    value_template: |
+      {{is_state("sun.sun", "above_horizon")}}
+condition: []
+action:
+  - service: media_player.play_media
+    target:
+      entity_id:
+        - media_player.all_devices
+    data:
+      media_content_id: media-source://media_source/local/audio/doa-pagi.mp3
+      media_content_type: audio/mp3
+      extra:
+        title: Doa Pagi
+  - delay: '00:02:53'
+  - condition: template
+    value_template: >-
+      {% set raya = (state_attr('sensor.solat_jakim', 'prayerTime')[0].hijri[8:10] ~ '-' ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].hijri[5:7]) %}
+      {{ raya == '01-10' or raya == '10-12' }}
+  - service: media_player.play_media
+    target:
+      entity_id:
+        - media_player.all_devices
+    data:
+      media_content_id: media-source://media_source/local/audio/takbir.mp3
+      media_content_type: audio/mp3
+      extra:
+        title: >-
+          Takbir Raya {{state_attr('sensor.solat_jakim', 'prayerTime')[0].hijri[0:4] ~ 'h'}}
+mode: single
