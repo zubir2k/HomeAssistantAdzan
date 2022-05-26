@@ -24,7 +24,7 @@
         {% set months = ["Muharram", "Safar", "Rabi\'ul Awwal", "Rabi\'ul Akhir", "Jamadil Awwal", "Jamadil Akhir", "Rejab", "Sha\'aban", "Ramadhan", "Syawal", "Zulkaedah", "Zulhijjah"] %}
         {% set yearday = now().strftime("%j") | int %} 
         {%if is_state("input_select.solat", "eSolat")%}{{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[8:10] }} {{ months[(state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[5:7] | int)-1] }} {{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[0:4] }}h
-        {%elif is_state("input_select.solat", "AzanPro")%}{{ state_attr("sensor.hijridate_api", "day") + " " + months[state_attr("sensor.hijridate_api", "month").number-1] + " " + state_attr("sensor.hijridate_api", "year") + "h" }}
+        {%elif is_state("input_select.solat", "AzanPro")%}{{ state_attr('sensor.solat_azanpro', 'prayer_times').hijri[8:10] }} {{ months[(state_attr('sensor.solat_azanpro', 'prayer_times').hijri[5:7] | int)-1] }} {{ state_attr('sensor.solat_azanpro', 'prayer_times').hijri[0:4] }}h
         {%elif is_state("input_select.solat", "Local")%}{{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[8:10] }} {{ months[(state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[5:7] | int)-1] }} {{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[0:4] }}h
         {%endif%}
       attribute_templates: 
@@ -38,8 +38,6 @@
 - platform: rest
   name: solat_local
   resource_template: "{{states('input_text.homeurl')}}/local/esolat.json"
-  #resource: https://xxxx.duckdns.org/local/esolat.json # Domain name
-  #resource: http://192.168.0.123:8123/local/esolat.json # IP address
   json_attributes:
     - zone
     - prayerTime
