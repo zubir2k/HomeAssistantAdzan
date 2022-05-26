@@ -1,7 +1,7 @@
 # Home Assistant Adzan 3.0 ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
-- <s>AzanPro - [Website](https://api.azanpro.com)</s>. <- This source no longer work!
+- AzanPro - [Website](https://api.azanpro.com).
 - Aladhan (for Hijri Dates) - [Website](https://aladhan.com/islamic-calendar-api)
 
 **Whats New in 3.0**
