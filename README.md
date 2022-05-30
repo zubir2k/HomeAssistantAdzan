@@ -1,10 +1,13 @@
-# Home Assistant Adzan 3.0 ![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
+![Home Assistant Adzan](https://user-images.githubusercontent.com/1905339/170957516-6173d318-2600-4372-bc19-b13e224272de.png)\
+![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/zubirjamal/)
+
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
 - AzanPro - [Website](https://api.azanpro.com).
-- Aladhan (for Hijri Dates) - [Website](https://aladhan.com/islamic-calendar-api)
+- Local - locally stored prayer time yearly data in Home Assistant
 
-**Whats New in 3.0**
+**Whats New in v3.0**
 - Source and location can be entered using input text and input select.
 - Easily change sources if one failed (i.e. Timeout)
 - Solat data can be stored locally and use as source. 
@@ -12,9 +15,16 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 
 You may also try [GPS Based](https://gist.github.com/zubir2k/04a3180f50f621c5840bbdc477d0027f) Solat sensor. (API provided by MPT)
 
+## Screenshot
 ![image](https://user-images.githubusercontent.com/1905339/154905774-b63319d5-4b4b-46e5-9fab-8efdeeb10400.png)
 
 ![image](https://user-images.githubusercontent.com/1905339/141753194-579d9190-969f-4029-bf6c-92d7fdd65ab2.png)
+
+## Video Tutorial
+
+[![Youtube](https://user-images.githubusercontent.com/1905339/170959888-079db2b3-b161-4f00-8486-af0dbbdb5aba.jpg)](https://youtu.be/DZGJwaeQuGA)
+- Automation Adzan using Home Assistant: https://youtu.be/DZGJwaeQuGA
+- Beginners Guide to Home Assistant: https://youtu.be/-jyegp-mL20 
 
 ## Installation
 ### 1. [configuration.yaml](configuration.yaml)
@@ -91,10 +101,6 @@ Copy 2 audio files into your `/media/audio/` OR `/config/www/audio` OR `/share/a
 - azansubuh.mp3
 - azan_alexa.mp3
 - azansubuh_alexa.mp3
-
-## In-depth Video Tutorial
-- Automation Adzan using Home Assistant: https://youtu.be/DZGJwaeQuGA
-- Beginners Guide to Home Assistant: https://youtu.be/-jyegp-mL20 
 
 ## Special Thanks
 - [@farxpeace](https://github.com/farxpeace) - for the original code
