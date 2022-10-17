@@ -5,20 +5,28 @@
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
 - AzanPro - [Website](https://api.azanpro.com).
-- Local - locally stored prayer time yearly data in Home Assistant
+- Home Assistant Official Islamic Prayer Time - [Website](https://www.home-assistant.io/integrations/islamic_prayer_times).
 
-**Whats New in v3.0**
-- Source and location can be entered using input text and input select.
-- Easily change sources if one failed (i.e. Timeout)
-- Solat data can be stored locally and use as source. 
-- Added Persistent Notification as default notification.
+**Whats New in v4.0**
+- Fully revamped eSolat sensors.
+- Easy install with minimal configuration.
+- Prayer time sensor will show in timestamp format. 12/24hours format are now in attributes.
+- Automation are now created by default automatically. However, you may choose to create your own.
+- Dynamic Media Player selector.
+- Added support the official Home Assistant Islamic Prayer Time
 
-You may also try [GPS Based](https://gist.github.com/zubir2k/04a3180f50f621c5840bbdc477d0027f) Solat sensor. (API provided by MPT)
+**The Default Automation will perform the following:**
+- Play TTS (for Google) or Play audio TTS (for Alexa)
+- Play Azan
+- Send Persistent Notification
+- Send default Notification (notify.notify)
 
 ## Screenshot
 ![image](https://user-images.githubusercontent.com/1905339/154905774-b63319d5-4b4b-46e5-9fab-8efdeeb10400.png)
 
-![image](https://user-images.githubusercontent.com/1905339/141753194-579d9190-969f-4029-bf6c-92d7fdd65ab2.png)
+![lovelace-dashboard](https://user-images.githubusercontent.com/1905339/196147059-341c5e1d-17af-4d88-b9de-a0932759dc85.png)
+
+![image](https://user-images.githubusercontent.com/1905339/196146905-8d58a7b5-846f-4461-8be8-73fc44eaa7da.png)
 
 ## Video Tutorial
 
@@ -27,81 +35,42 @@ You may also try [GPS Based](https://gist.github.com/zubir2k/04a3180f50f621c5840
 - Beginners Guide to Home Assistant: https://youtu.be/-jyegp-mL20 
 
 ## Installation
-### 1. [configuration.yaml](configuration.yaml)
-- Copy the lines into your configuration.yaml.
-- It will enable/create the following:
-  1. Downloader
-  2. Input Select (for source selection)
-  3. Input Text (for state/location code
-  4. Load solat sensors
-- Copy [esolat.yaml](esolat.yaml) into `/config`. **DO NOT ALTER THIS FILE**
-- Reboot your Home Assistant to take effect.
-- Once rebooted, perform the following:
-  1. Enter your location code `input_text.solat` based on location/zone list
-  2. Enter your Home Assistant URL in `input_text.homeurl`
-  3. Select source (eSolat/AzanPro/Local)
+### 1. Copy all files
+- Browse into your Home Assistant directory and paste all files into `\config` and `\media`.
 
-**eSolat**\
-https://www.e-solat.gov.my/index.php?siteId=24&pageId=50
+### 2. Add eSolat into [configuration.yaml](configuration.yaml)
+- Add the following line into the config file
 
-**AzanPro**\
-https://api.azanpro.com/zones
-
-### 2. [automation.yaml](automation.yaml)
-Copy the automations into your current automations.yaml
-- Azan 3.0
-- Azan 3.0 Yearly Update \
-  (you need to run it once for the initial setup. It will save a esolat.json file into your ``/www/`` path)
-
-![image](https://user-images.githubusercontent.com/1905339/141753839-1d9b3570-331e-4e3c-a487-572adc47e7cc.png)
-
-**Adzan:**\
-It is highly recommended to use speaker group (via Home Assistant) or from your Alexa or Google Home App.\
-Example use in this automation is *all_devices* `media_player.all_devices` 
-
-**Random verse:**\
-You may add/remove audio files depending on your preferences.\
-You can also use URL by changing the `media-source://media_source/local/audio/xxx.mp3`
 ```yaml
-  - service: media_player.play_media
-    data:
-      media_content_type: audio/mp3
-      media_content_id: |
-        {{ ["media-source://media_source/local/audio/surah1.mp3",
-            "media-source://media_source/local/audio/surah2.mp3",
-            "media-source://media_source/local/audio/surah3.mp3",
-            "media-source://media_source/local/audio/surah4.mp3",
-            ] | random }}
+homeassistant:
+  packages: !include_dir_named esolat/
 ```
 
-### 2(a). [automation_alexa.yaml](automation_alexa.yaml) -- For Alexa Devices
-- **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
-- Audio files must be placed at ``/config/www/audio``
-- Due to Alexa restriction, it will only work on Home Assistant with SSL (HTTPS) -- tested to work on Cloudflare SSL
-- [Alexa Documentation](https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html#audio)
+- Restart Home Assistant to take effect.
 
-**Audio requirements:**
-- Bit rate: 48kbps
-- Sample rate: 22050Hz, 24000Hz, or 16000Hz
-- Duration: Cannot exceed 4min (240sec)
+### 3. Dashboard [lovelace-ui.yaml](lovelace-ui.yaml)
+- Add new card, scroll at the bottom and choose Manual. 
+- Copy & paste the YAML respectively.
 
-### 2(b). Raspberry Pi Audio
-- Ensure VLC is installed. For HA hosted in a RaspberryPi, you may use [Local-VLC](https://github.com/rodripf/hassio-local-vlc) addon.
-- Ensure official [VLC Media Player](https://www.home-assistant.io/integrations/vlc_telnet) integration is configured.
-- **IMPORTANT**: All audio files must be stored in ``/share/audio``
+![image](https://user-images.githubusercontent.com/1905339/196153827-56e67de2-1591-46aa-9b10-090d5dfb9633.png)
 
-### 3. [lovelace.yaml](lovelace.yaml)
-Add new entities card on your dashboard and paste the YAML codes.
+## Configure eSolat
+### 1. Source
+- Select source (Jakim/AzanPro/Local/Islamic Prayer Time)
+- Enter state code (not applicable for Islamic Prayer Time)
+- For Islamic Prayer Time, please ensure to complete the configuration in the Home Assistant Integration menu
 
-![image](https://user-images.githubusercontent.com/1905339/141753688-0944797d-cd20-430e-97a7-104ebc010a4f.png)
+### 2. Azan Audio & Automation
+- Select your preferred media player 
+- Choose your automation (Google or Alexa). Select Custom if you wish to use your own automation.
+- **For Google**, please enter `azan.mp3` and `azansubuh.mp3` as your audio files. You may use your own mp3 stored in your `\media` folder.
+- **For Alexa**, please enter your `home_url`. **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
 
-## MP3 Audio Files
-Copy 2 audio files into your `/media/audio/` OR `/config/www/audio` OR `/share/audio`
-- azan.mp3
-- azansubuh.mp3
-- azan_alexa.mp3
-- azansubuh_alexa.mp3
+### 3. Refresh
+- Press both Online and Local sensors to take effect.
 
 ## Special Thanks
-- [@farxpeace](https://github.com/farxpeace) - for the original code
+- [@farxpeace](https://github.com/farxpeace) - for the original integration code for AzanPro
 - [HomeAssistantMalaysia](https://www.facebook.com/groups/homeassistantmalaysia)
+
+*You may also try [GPS Based](https://gist.github.com/zubir2k/04a3180f50f621c5840bbdc477d0027f) Solat sensor. (API provided by MPT)*
