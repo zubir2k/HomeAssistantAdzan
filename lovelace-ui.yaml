@@ -1,0 +1,154 @@
+## [ Dashboard ] ##
+type: markdown
+content: >-
+  > Today is</b><br /><font size=7>{{ now().strftime('%I:%M %p') }}<br />{{
+  now().strftime('%A') }}</font><br /><font size=2>{{ now().strftime('%d %B %Y')
+  }} | {{states('sensor.hijridate')}}</font>
+
+
+  <ha-alert><b>Waktu Sekarang: </b>{{ states('sensor.waktu_sekarang') }} - {{
+  state_attr('sensor.waktu_sekarang', '12hours') }}{%if
+  state_attr('sensor.waktu_sekarang', 'next') == 'Imsak' %}{%else%}<br
+  /><b>Waktu Berikutnya:</b> {{ state_attr('sensor.waktu_sekarang', 'next') }}
+  <font size=1>({{ state_attr('sensor.waktu_sekarang', 'nextremaining') }}
+  remaining)</font>{%endif%}</ha-alert>
+
+
+  <table align=center width=100%><tr
+  align=center><th>Subuh</th><th>Zohor</th><th>Asar</th><th>Maghrib</th><th>Isyak</th></tr>
+
+  <tr align=center><td>{{ state_attr('sensor.solat_subuh', '12hours')
+  }}</td><td>{{ state_attr('sensor.solat_zohor', '12hours') }}</td><td>{{
+  state_attr('sensor.solat_asar', '12hours') }}</td><td>{{
+  state_attr('sensor.solat_maghrib', '12hours') }}</td><td>{{
+  state_attr('sensor.solat_isyak', '12hours') }}</td></tr></table>
+
+## [ Prayer Time Panel ] ##
+type: entities
+entities:
+  - entity: sensor.waktu_sekarang
+  - type: divider
+  - entity: sensor.solat_subuh
+    format: time
+  - entity: sensor.solat_zohor
+    format: time
+  - entity: sensor.solat_asar
+    format: time
+  - entity: sensor.solat_maghrib
+    format: time
+  - entity: sensor.solat_isyak
+    format: time
+  - type: divider
+  - entity: sensor.waktu_imsak
+  - entity: sensor.waktu_syuruk
+  - entity: sensor.waktu_dhuha
+  - entity: sensor.waktu_isyraq
+title: Islamic Prayer Time
+icon: mdi:hands-pray
+view_layout:
+  position: sidebar
+
+## [ Configuration Panel ] ##
+type: vertical-stack
+cards:
+  - type: entities
+    entities:
+      - entity: sensor.hijridate
+      - type: section
+        label: State Code & Source
+      - entity: select.solat_source
+      - type: conditional
+        conditions:
+          - entity: select.solat_source
+            state_not: Islamic Prayer Times
+        row:
+          entity: input_text.solat
+      - type: section
+        label: Azan Audio & Automation
+      - entity: select.azan_media_players
+      - entity: input_select.azan_player
+      - type: conditional
+        conditions:
+          - entity: input_select.azan_player
+            state: Google
+            state_not: Custom
+        row:
+          entity: input_text.selected_audio_azan
+      - type: conditional
+        conditions:
+          - entity: input_select.azan_player
+            state: Google
+            state_not: Custom
+        row:
+          entity: input_text.selected_audio_azan_subuh
+      - type: conditional
+        conditions:
+          - entity: input_select.azan_player
+            state: Alexa
+            state_not: Custom
+        row:
+          entity: input_text.home_url
+      - type: section
+        label: Manual Control
+      - type: call-service
+        service: rest.reload
+        name: Online Sensors (eSolat/AzanPro)
+        icon: mdi:reload
+        action_name: Refresh
+      - type: button
+        tap_action:
+          action: call-service
+          service: automation.toggle
+          data:
+            entity_id: automation.azan_yearly_update
+        name: Local Sensors
+        icon: mdi:reload
+        action_name: Refresh
+    title: 📿 eSolat Configuration
+view_layout:
+  position: sidebar
+
+## [ Configuration Guide ] ##
+type: markdown
+content: >
+  **State Code & Source**
+
+  - Select Source to your preference.<br />(eSolat/AzanPro/Local/Official HA
+  Islamic Prayer Time)
+
+  - Please enter your state codes based on
+  [here](https://www.e-solat.gov.my/index.php?siteId=24&pageId=50).
+
+  - **For Local source**, please press Refresh at the manual control section for
+  the first time or when changing the state code.
+
+
+  <ha-alert>**Islamic Prayer Times** is visible only if it has been activated.
+  <br />Please add the integration from the Home Assistant Integrations menu if
+  required.</ha-alert>
+
+
+  **Azan Audio & Automation**
+
+  - Select your desired audio player <br />(recommended to use Speaker Group)
+
+  - Select your preferred Azan Automation (Google or Alexa).
+
+  - Default TTS will be used for Google while Alexa will be using audio files.
+
+  - **For Google**, you may specify multiple azan audio <br />(Mp3 files must be
+  stored in the media folder)
+
+  - **For Alexa**, you need to provide the external URL of your HA <br />(Please
+  ensure your HA is accessible via https).
+
+  - To use your own automation, please select **Custom**<br />(This will disable
+  both Google and Alexa default automation).
+
+
+  **Manual Control**
+
+  - Online Sensors: This will refresh eSolat and AzanPro sensors
+
+  - Local Sensors: This will download the latest eSolat data.
+title: Configuration Guide
