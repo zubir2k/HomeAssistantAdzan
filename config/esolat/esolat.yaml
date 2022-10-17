@@ -39,10 +39,6 @@ template:
           data:
             value: "{{ option }}"
 
-## TODO 
-## Alexa Notify Service Call (instead of media_player)
-## {{ states('select.azan_media_players') | replace('media_player.', 'notify.alexa_media_') }}
-
 ## Input Select ##
 input_select:
   azan_player:
