@@ -39,6 +39,9 @@ cards:
         row:
           entity: input_text.home_url
       - type: section
+        label: Azan Volume
+      - entity: input_number.volume_slider
+      - type: section
         label: Manual Control
       - type: call-service
         service: rest.reload
