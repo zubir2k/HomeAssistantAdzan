@@ -1,53 +1,3 @@
-## [ Dashboard ] ##
-type: markdown
-content: >-
-  > Today is</b><br /><font size=7>{{ now().strftime('%I:%M %p') }}<br />{{
-  now().strftime('%A') }}</font><br /><font size=2>{{ now().strftime('%d %B %Y')
-  }} | {{states('sensor.hijridate')}}</font>
-
-
-  <ha-alert><b>Waktu Sekarang: </b>{{ states('sensor.waktu_sekarang') }} - {{
-  state_attr('sensor.waktu_sekarang', '12hours') }}{%if
-  state_attr('sensor.waktu_sekarang', 'next') == 'Imsak' %}{%else%}<br
-  /><b>Waktu Berikutnya:</b> {{ state_attr('sensor.waktu_sekarang', 'next') }}
-  <font size=1>({{ state_attr('sensor.waktu_sekarang', 'nextremaining') }}
-  remaining)</font>{%endif%}</ha-alert>
-
-
-  <table align=center width=100%><tr
-  align=center><th>Subuh</th><th>Zohor</th><th>Asar</th><th>Maghrib</th><th>Isyak</th></tr>
-
-  <tr align=center><td>{{ state_attr('sensor.solat_subuh', '12hours')
-  }}</td><td>{{ state_attr('sensor.solat_zohor', '12hours') }}</td><td>{{
-  state_attr('sensor.solat_asar', '12hours') }}</td><td>{{
-  state_attr('sensor.solat_maghrib', '12hours') }}</td><td>{{
-  state_attr('sensor.solat_isyak', '12hours') }}</td></tr></table>
-
-## [ Prayer Time Panel ] ##
-type: entities
-entities:
-  - entity: sensor.waktu_sekarang
-  - type: divider
-  - entity: sensor.solat_subuh
-    format: time
-  - entity: sensor.solat_zohor
-    format: time
-  - entity: sensor.solat_asar
-    format: time
-  - entity: sensor.solat_maghrib
-    format: time
-  - entity: sensor.solat_isyak
-    format: time
-  - type: divider
-  - entity: sensor.waktu_imsak
-  - entity: sensor.waktu_syuruk
-  - entity: sensor.waktu_dhuha
-  - entity: sensor.waktu_isyraq
-title: Islamic Prayer Time
-icon: mdi:hands-pray
-view_layout:
-  position: sidebar
-
 ## [ Configuration Panel ] ##
 type: vertical-stack
 cards:
@@ -152,3 +102,53 @@ content: >
 
   - Local Sensors: This will download the latest eSolat data.
 title: Configuration Guide
+
+## [ Dashboard ] ##
+type: markdown
+content: >-
+  > Today is</b><br /><font size=7>{{ now().strftime('%I:%M %p') }}<br />{{
+  now().strftime('%A') }}</font><br /><font size=2>{{ now().strftime('%d %B %Y')
+  }} | {{states('sensor.hijridate')}}</font>
+
+
+  <ha-alert><b>Waktu Sekarang: </b>{{ states('sensor.waktu_sekarang') }} - {{
+  state_attr('sensor.waktu_sekarang', '12hours') }}{%if
+  state_attr('sensor.waktu_sekarang', 'next') == 'Imsak' %}{%else%}<br
+  /><b>Waktu Berikutnya:</b> {{ state_attr('sensor.waktu_sekarang', 'next') }}
+  <font size=1>({{ state_attr('sensor.waktu_sekarang', 'nextremaining') }}
+  remaining)</font>{%endif%}</ha-alert>
+
+
+  <table align=center width=100%><tr
+  align=center><th>Subuh</th><th>Zohor</th><th>Asar</th><th>Maghrib</th><th>Isyak</th></tr>
+
+  <tr align=center><td>{{ state_attr('sensor.solat_subuh', '12hours')
+  }}</td><td>{{ state_attr('sensor.solat_zohor', '12hours') }}</td><td>{{
+  state_attr('sensor.solat_asar', '12hours') }}</td><td>{{
+  state_attr('sensor.solat_maghrib', '12hours') }}</td><td>{{
+  state_attr('sensor.solat_isyak', '12hours') }}</td></tr></table>
+
+## [ Prayer Time Panel ] ##
+type: entities
+entities:
+  - entity: sensor.waktu_sekarang
+  - type: divider
+  - entity: sensor.solat_subuh
+    format: time
+  - entity: sensor.solat_zohor
+    format: time
+  - entity: sensor.solat_asar
+    format: time
+  - entity: sensor.solat_maghrib
+    format: time
+  - entity: sensor.solat_isyak
+    format: time
+  - type: divider
+  - entity: sensor.waktu_imsak
+  - entity: sensor.waktu_syuruk
+  - entity: sensor.waktu_dhuha
+  - entity: sensor.waktu_isyraq
+title: Islamic Prayer Time
+icon: mdi:hands-pray
+view_layout:
+  position: sidebar
