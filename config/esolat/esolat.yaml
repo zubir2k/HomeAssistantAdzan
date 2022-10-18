@@ -477,6 +477,12 @@ automation:
                     {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
                     yang sama waktu dengannya.
                   title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+              - service: media_player.volume_set
+                target:
+                  entity_id:
+                   - "{{ states('select.azan_media_players') }}"
+                data:
+                  volume_level: "{{ states('input_number.volume_slider') }}"
               - service: tts.google_translate_say
                 data:
                   entity_id: "{{ states('select.azan_media_players') }}"
@@ -516,6 +522,12 @@ automation:
                     {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
                     yang sama waktu dengannya.
                   title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+              - service: media_player.volume_set
+                target:
+                  entity_id:
+                   - "{{ states('select.azan_media_players') }}"
+                data:
+                  volume_level: "{{ states('input_number.volume_slider') }}"
               - service: tts.google_translate_say
                 data:
                   entity_id: "{{ states('select.azan_media_players') }}"
