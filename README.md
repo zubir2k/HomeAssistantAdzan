@@ -30,8 +30,9 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 
 ## Video Tutorial
 
-[![Youtube](https://user-images.githubusercontent.com/1905339/170959888-079db2b3-b161-4f00-8486-af0dbbdb5aba.jpg)](https://youtu.be/DZGJwaeQuGA)
-- Automation Adzan using Home Assistant: https://youtu.be/DZGJwaeQuGA
+[![Youtube](https://user-images.githubusercontent.com/1905339/197347154-463881c9-dfdb-4dbb-ae03-5764022a0a84.png)](https://youtu.be/SVzybCpjWGQ)
+
+- Automation Adzan using Home Assistant: https://youtu.be/SVzybCpjWGQ
 - Beginners Guide to Home Assistant: https://youtu.be/-jyegp-mL20 
 
 ## Installation
