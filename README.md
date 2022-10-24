@@ -70,6 +70,35 @@ homeassistant:
 ### 3. Refresh
 - Press both Online and Local sensors to take effect.
 
+## Automation Ideas
+There are many ways that you can benefit from the prayer time sensors.
+
+### 1. Execute action upon x minute **before** prayer time.
+Example: 15min before Maghrib, play random surah. `15*60` where 15 is in minutes.
+
+```yaml
+{{ state_attr('sensor.solat_maghrib', '24hours') == (now().strftime('%s') | int + 15*60) | timestamp_custom("%H:%M", false) }}
+```
+
+### 2. Random play audio
+Example: Random play Surah before/after azan.
+
+```yaml
+  - service: media_player.play_media
+    data:
+      media_content_type: audio/mp3
+      media_content_id: |
+        {{ ["media-source://media_source/local/audio/surah1.mp3",
+            "media-source://media_source/local/audio/surah2.mp3",
+            "media-source://media_source/local/audio/surah3.mp3",
+            "media-source://media_source/local/audio/surah4.mp3",
+            ] | random }}
+```
+
+### 3. Others
+Send notification to any Android TVs and perhaps then shutting off the TV. \
+Example: Alert family to get ready for Maghrib. Then turn off the TV 😁
+
 ## Special Thanks
 - [@farxpeace](https://github.com/farxpeace) - for the original integration code for AzanPro
 - [HomeAssistantMalaysia](https://www.facebook.com/groups/homeassistantmalaysia)
