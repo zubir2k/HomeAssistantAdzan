@@ -58,7 +58,7 @@ homeassistant:
 ## Configure eSolat
 ### 1. Source
 - Select source (Jakim/AzanPro/Local/Islamic Prayer Time)
-- Enter state code (not applicable for Islamic Prayer Time)
+- Enter state code (not applicable for Islamic Prayer Time) -- Refer state code [here](https://www.e-solat.gov.my/index.php?siteId=24&pageId=50). 
 - For Islamic Prayer Time, please ensure to complete the configuration in the Home Assistant Integration menu
 
 ### 2. Azan Audio & Automation
