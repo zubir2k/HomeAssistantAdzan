@@ -44,7 +44,7 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 
 ```yaml
 homeassistant:
-  packages: !include_dir_named esolat/
+  packages: !include_dir_named HAMY/
 ```
 
 - Restart Home Assistant to take effect.
