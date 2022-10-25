@@ -1,0 +1,589 @@
+## Malaysia prayer time based on AzanPro and JAKIM Official API
+## Version 4.0 - All sensors, and input are packaged into 1 single esolat.yaml
+## IMPORTANT NOTE: NO CHANGES IS REQUIRED TO THIS FILE. CONFIGURATION IS SET AT INPUT TEXT AND INPUT SELECT.
+## Last Update Date: 25/10/2022
+
+## Downloader ##
+downloader:
+  download_dir: HAMY/esolat
+
+## Media Location
+homeassistant:
+  media_dirs:
+    local: /media
+  allowlist_external_dirs:
+    - /config/HAMY/esolat
+
+## Media Select ##
+template:
+  - select:
+    - name: "Azan Media Players"
+      state: "{{ states('input_text.selected_media_player') }}"
+      options: >
+        {{ states.media_player
+        | rejectattr('state', 'in', ['unavailable', 'unknown'])
+        | map(attribute ='entity_id') | list }}
+      select_option:
+        - service: input_text.set_value
+          target:
+            entity_id: input_text.selected_media_player
+          data:
+            value: "{{ option }}"
+    - name: "Solat Source"
+      state: "{{ states('input_text.selected_solat_source') }}"
+      options: >
+         {{ "['Local', 'eSolat', 'AzanPro'" ~ integration_entities("Islamic Prayer Times") | iif(", 'Islamic Prayer Times'", "") ~ "]" }}
+      select_option:
+        - service: input_text.set_value
+          target:
+            entity_id: input_text.selected_solat_source
+          data:
+            value: "{{ option }}"
+
+## Input Select ##
+input_select:
+  azan_player:
+    name: "Azan Automation (Google/Alexa/Custom)"
+    options:
+      - Google
+      - Alexa
+      - Custom
+
+## Input Text ##
+input_text:
+  home_url:
+    name: "Home Assistant URL (https://xx.duckdns.org)"
+    icon: mdi:home-assistant
+  solat:
+    name: "Solat State Code"
+    icon: mdi:star-crescent
+  selected_solat_source:
+    name: "Solat Source"
+    icon: mdi:star-crescent
+  selected_media_player:
+    name: "Azan Media Player"
+  selected_audio_azan:
+    name: "Audio Azan (azan1.mp3, azan2.mp3...)"
+  selected_audio_azan_subuh:
+    name: "Audio Azan Subuh (azansubuh1.mp3, azansubuh2.mp3...)"
+
+## Main Sensors ##
+sensor:
+  - platform: command_line
+    name: solat_local
+    command: "jq '.' /config/HAMY/esolat/esolat.json"    
+    value_template: '{{ value_json.zone }}'
+    json_attributes:
+      - zone
+      - prayerTime
+      - serverTime
+  - platform: rest
+    name: solat_azanpro
+    scan_interval: 7200
+    resource_template: "https://api.azanpro.com/times/today.json?zone={{states('input_text.solat')}}&format=24-hour"
+    json_attributes:
+      - zone
+      - prayer_times
+    value_template: '{{ value_json.zone }}'
+  - platform: rest
+    name: solat_jakim
+    scan_interval: 7200
+    resource_template: "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone={{states('input_text.solat')}}"
+    json_attributes:
+      - zone
+      - prayerTime
+    value_template: '{{ value_json.zone }}'
+
+## Hijri Date API ##
+  - platform: rest
+    resource_template: "http://api.aladhan.com/v1/gToH?adjustment=-1&date={{ now().strftime('%d-%m-%Y') }}"
+    #resource_template: "http://api.aladhan.com/v1/gToH?date={{ now().strftime('%d-%m-%Y') }}"
+    name: HijriDate API
+    json_attributes_path: "$.data.hijri"
+    json_attributes:
+      - day
+      - month
+      - year
+      - holiday
+    value_template: "{{ value_json.data.hijri.date }}"
+
+## Hijri Date Sensor ##
+  - platform: template
+    sensors:
+      hijridate:
+        friendly_name: "Hijri Date"
+        icon_template: mdi:calendar
+        value_template: >-
+          {% set months = ["Muharram", "Safar", "Rabi\'ul Awwal", "Rabi\'ul Akhir", "Jamadil Awwal", "Jamadil Akhir", "Rejab", "Sha\'aban", "Ramadhan", "Syawal", "Zulkaedah", "Zulhijjah"] %}
+          {% set yearday = now().strftime("%j") | int %} 
+          {%if is_state("select.solat_source", "eSolat")%}{{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[8:10] }} {{ months[(state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[5:7] | int)-1] }} {{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[0:4] }}h
+          {%elif is_state("select.solat_source", "AzanPro")%}{{ state_attr('sensor.solat_azanpro', 'prayer_times').hijri[8:10] }} {{ months[(state_attr('sensor.solat_azanpro', 'prayer_times').hijri[5:7] | int)-1] }} {{ state_attr('sensor.solat_azanpro', 'prayer_times').hijri[0:4] }}h
+          {%elif is_state("select.solat_source", "Local")%}{{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[8:10] }} {{ months[(state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[5:7] | int)-1] }} {{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[0:4] }}h
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ state_attr('sensor.hijridate_api', 'day') }} {{ state_attr('sensor.hijridate_api', 'month')['en'] }} {{ state_attr('sensor.hijridate_api', 'year') }}h
+          {%endif%}
+        attribute_templates: 
+          date: >-
+            {% set months = ["Muharram", "Safar", "Rabi\'ul Awwal", "Rabi\'ul Akhir", "Jamadil Awwal", "Jamadil Akhir", "Rejab", "Sha\'aban", "Ramadhan", "Syawal", "Zulkaedah", "Zulhijjah"] %}
+            {% set yearday = now().strftime("%j") | int %} 
+            {%if is_state("select.solat_source", "eSolat")%}{{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[8:10] }}-{{ (state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[5:7] | int) }}-{{ state_attr("sensor.solat_jakim", "prayerTime")[0].hijri[0:4] }}
+            {%elif is_state("select.solat_source", "AzanPro")%}{{ state_attr('sensor.solat_azanpro', 'prayer_times').hijri[8:10] }}-{{ (state_attr('sensor.solat_azanpro', 'prayer_times').hijri[5:7] | int) }}-{{ state_attr('sensor.solat_azanpro', 'prayer_times').hijri[0:4] }}
+            {%elif is_state("select.solat_source", "Local")%}{{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[8:10] }}-{{ (state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[5:7] | int) }}-{{ state_attr("sensor.solat_local", "prayerTime")[yearday-1].hijri[0:4] }}
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.hijridate_api') }}
+            {%endif%}
+          source: >-
+            {%if is_state("select.solat_source", "eSolat")%}eSolat
+            {%elif is_state("select.solat_source", "AzanPro")%}AzanPro
+            {%elif is_state("select.solat_source", "Local")%}Local
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+            
+## Alexa Notification ##
+      notify_alexa:
+        friendly_name: "Notify Azan (Alexa)"
+        value_template: "{{ states('select.azan_media_players') | replace('media_player.', 'notify.alexa_media_') }}"
+
+## Prayer Time Sensors ##
+  - platform: template
+    sensors:
+      waktu_imsak:
+        friendly_name: "Imsak"
+        device_class: timestamp
+        icon_template: mdi:weather-night
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].imsak, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].imsak, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['imsak'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ (as_timestamp(states('sensor.fajr_prayer')) | int - (10*60)) | timestamp_utc }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.waktu_imsak')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.waktu_imsak')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.waktu_imsak') | as_datetime) else ((states('sensor.waktu_imsak') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      waktu_syuruk:
+        friendly_name: "Syuruk"
+        device_class: timestamp
+        icon_template: mdi:weather-sunset-up
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].syuruk, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].syuruk, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['syuruk'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.sunrise_time') }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.waktu_syuruk')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.waktu_syuruk')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.waktu_syuruk') | as_datetime) else ((states('sensor.waktu_syuruk') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      
+      ## Waktu Isyraq mengikut pandangan Mufti Wilayah ## 
+      ## https://zbrj.ml/waktuisyraq ##
+      waktu_isyraq: 
+        friendly_name: "Isyraq"
+        device_class: timestamp
+        icon_template: mdi:weather-sunset-up
+        value_template: >-
+          {{ (as_timestamp(states('sensor.waktu_syuruk')) | int + (12*60)) | timestamp_utc }}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.waktu_isyraq')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.waktu_isyraq')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.waktu_isyraq') | as_datetime) else ((states('sensor.waktu_isyraq') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {{ state_attr('sensor.waktu_syuruk', 'source') }}
+      waktu_dhuha:
+        friendly_name: "Dhuha"
+        device_class: timestamp
+        icon_template: mdi:weather-sunset-up
+        value_template: >-
+          {{ (as_timestamp(states('sensor.waktu_syuruk')) | int + (15*60)) | timestamp_utc }}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.waktu_dhuha')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.waktu_dhuha')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.waktu_dhuha') | as_datetime) else ((states('sensor.waktu_dhuha') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {{ state_attr('sensor.waktu_syuruk', 'source') }}
+            
+      solat_subuh:
+        friendly_name: "Subuh"
+        device_class: timestamp
+        icon_template: mdi:star-crescent
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].fajr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].fajr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['subuh'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.fajr_prayer') }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.solat_subuh')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.solat_subuh')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.solat_subuh') | as_datetime) else ((states('sensor.solat_subuh') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      solat_zohor:
+        friendly_name: "Zohor"
+        device_class: timestamp
+        icon_template: mdi:star-crescent
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].dhuhr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].dhuhr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['zohor'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.dhuhr_prayer') }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.solat_zohor')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.solat_zohor')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.solat_zohor') | as_datetime) else ((states('sensor.solat_zohor') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      solat_asar:
+        friendly_name: "Asar"
+        device_class: timestamp
+        icon_template: mdi:star-crescent
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].asr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].asr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['asar'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.asr_prayer') }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.solat_asar')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.solat_asar')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.solat_asar') | as_datetime) else ((states('sensor.solat_asar') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      solat_maghrib:
+        friendly_name: "Maghrib"
+        device_class: timestamp
+        icon_template: mdi:star-crescent
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].maghrib, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].maghrib, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['maghrib'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.maghrib_prayer') }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.solat_maghrib')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.solat_maghrib')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.solat_maghrib') | as_datetime) else ((states('sensor.solat_maghrib') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      solat_isyak:
+        friendly_name: "Isyak"
+        device_class: timestamp
+        icon_template: mdi:star-crescent
+        value_template: >-
+          {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].isha, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].isha, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
+          {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['isyak'], '%Y-%m-%d %H:%M')) | timestamp_local }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.isha_prayer') }}
+          {%endif%}
+        attribute_templates: 
+          12hours: >-
+            {{ as_timestamp(states('sensor.solat_isyak')) | timestamp_custom('%I:%M %p') }}
+          24hours: >-
+            {{ as_timestamp(states('sensor.solat_isyak')) | timestamp_custom('%H:%M') }}
+          remaining: >-
+            {{ '00:00' if now() > (states('sensor.solat_isyak') | as_datetime) else ((states('sensor.solat_isyak') | as_datetime) - now()).total_seconds() | timestamp_custom('%H:%M', false) }}
+          source: >-
+            {%if is_state('select.solat_source', 'Local')%}Local
+            {%elif is_state('select.solat_source', 'eSolat')%}eSolat
+            {%elif is_state('select.solat_source', 'AzanPro')%}AzanPro
+            {%elif is_state("select.solat_source", "Islamic Prayer Times")%}Islamic Prayer Times
+            {%endif%}
+      waktu_sekarang:
+        friendly_name: >-
+          {{ is_state("select.solat_source", "Islamic Prayer Times") | iif("Prayer Time", "Waktu Sekarang") }}
+        icon_template: mdi:star-crescent
+        value_template: >-
+          {%set timenow = now().timestamp() | int | timestamp_local %}
+          {%if timenow >= as_timestamp(states('sensor.waktu_imsak')) | timestamp_local and timenow < as_timestamp(states('sensor.solat_subuh')) | timestamp_local %}Imsak
+          {%elif timenow >= as_timestamp(states('sensor.solat_subuh')) | timestamp_local and timenow < as_timestamp(states('sensor.waktu_syuruk')) | timestamp_local %}Subuh
+          {%elif timenow >= as_timestamp(states('sensor.waktu_syuruk')) | timestamp_local and timenow < as_timestamp(states('sensor.waktu_isyraq')) | timestamp_local %}Syuruk
+          {%elif timenow >= as_timestamp(states('sensor.waktu_isyraq')) | timestamp_local and timenow < as_timestamp(states('sensor.waktu_dhuha')) | timestamp_local %}Isyraq
+          {%elif timenow >= as_timestamp(states('sensor.waktu_dhuha')) | timestamp_local and timenow < as_timestamp(states('sensor.solat_zohor')) | timestamp_local %}Dhuha
+          {%elif timenow >= as_timestamp(states('sensor.solat_zohor')) | timestamp_local and timenow < as_timestamp(states('sensor.solat_asar')) | timestamp_local %}Zohor
+          {%elif timenow >= as_timestamp(states('sensor.solat_asar')) | timestamp_local and timenow < as_timestamp(states('sensor.solat_maghrib')) | timestamp_local %}Asar
+          {%elif timenow >= as_timestamp(states('sensor.solat_maghrib')) | timestamp_local and timenow < as_timestamp(states('sensor.solat_isyak')) | timestamp_local %}Maghrib
+          {%elif timenow >= as_timestamp(states('sensor.solat_isyak')) | timestamp_local %}Isyak
+          {%else%}Isyak
+          {%endif%}
+        attribute_templates:
+          timestamp: >-
+            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ states('sensor.waktu_imsak') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}{{ states('sensor.solat_subuh') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}{{ states('sensor.waktu_syuruk') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}{{ states('sensor.waktu_isyraq') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}{{ states('sensor.waktu_dhuha') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}{{ states('sensor.solat_zohor') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}{{ states('sensor.solat_asar') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}{{ states('sensor.solat_maghrib') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ states('sensor.solat_isyak') }}
+            {%endif%}
+          12hours: >-
+            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ state_attr('sensor.waktu_imsak', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}{{ state_attr('sensor.solat_subuh', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}{{ state_attr('sensor.waktu_syuruk', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}{{ state_attr('sensor.waktu_isyraq', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}{{ state_attr('sensor.waktu_dhuha', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}{{ state_attr('sensor.solat_zohor', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}{{ state_attr('sensor.solat_asar', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}{{ state_attr('sensor.solat_maghrib', '12hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ state_attr('sensor.solat_isyak', '12hours') }}
+            {%endif%}
+          24hours: >-
+            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ state_attr('sensor.waktu_imsak', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}{{ state_attr('sensor.solat_subuh', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}{{ state_attr('sensor.waktu_syuruk', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}{{ state_attr('sensor.waktu_isyraq', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}{{ state_attr('sensor.waktu_dhuha', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}{{ state_attr('sensor.solat_zohor', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}{{ state_attr('sensor.solat_asar', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}{{ state_attr('sensor.solat_maghrib', '24hours') }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ state_attr('sensor.solat_isyak', '24hours') }}
+            {%endif%}
+          next: >-
+            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}Subuh
+            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}Syuruk
+            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}Isyraq
+            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}Dhuha
+            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}Zohor
+            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}Asar
+            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}Maghrib
+            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}Isyak
+            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}Imsak
+            {%endif%}
+          nextremaining: >-
+            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ '00:00' if now() > (states('sensor.solat_subuh') | as_datetime) else ((states('sensor.solat_subuh') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}{{ '00:00' if now() > (states('sensor.waktu_syuruk') | as_datetime) else ((states('sensor.waktu_syuruk') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}{{ '00:00' if now() > (states('sensor.waktu_isyraq') | as_datetime) else ((states('sensor.waktu_isyraq') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}{{ '00:00' if now() > (states('sensor.waktu_dhuha') | as_datetime) else ((states('sensor.waktu_dhuha') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}{{ '00:00' if now() > (states('sensor.solat_zohor') | as_datetime) else ((states('sensor.solat_zohor') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}{{ '00:00' if now() > (states('sensor.solat_asar') | as_datetime) else ((states('sensor.solat_asar') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}{{ '00:00' if now() > (states('sensor.solat_maghrib') | as_datetime) else ((states('sensor.solat_maghrib') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}{{ '00:00' if now() > (states('sensor.solat_isyak') | as_datetime) else ((states('sensor.solat_isyak') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ '00:00' if now() > (states('sensor.waktu_imsak') | as_datetime) else ((states('sensor.waktu_imsak') | as_datetime) - now()).total_seconds() | timestamp_custom('%H hours, %M minutes', false) }}
+            {%endif%}
+
+## Automation ##
+automation:
+  - alias: 🕋 Azan - Yearly Update
+    description: "🤖 Fetch JSON data from JAKIM on 1st January every year"
+    #unique_id: esolat_yearlyupdate
+    trigger:
+      - platform: time
+        at: '00:00:00'
+    condition:
+      - condition: template
+        value_template: '{{now().day == 1 and now().month == 1}}'
+    action:
+      - service: downloader.download_file
+        data:
+          url: >-
+            https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone={{states('input_text.solat')}}
+          filename: esolat.json
+          overwrite: true
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - service: command_line.reload
+    mode: single
+
+  - alias: 🕋 Azan - Startup Refresh
+    description: "Refresh realtime sensors from Jakim & AzanPro"
+    trigger:
+      - platform: homeassistant
+        event: start
+    condition: []
+    action:
+      - service: rest.reload
+    mode: single
+
+  - alias: 🕋 Azan - Google
+    description: "Play Audio and Notification (Disable this if you wish to use your own)"
+    trigger:
+      - platform: template
+        value_template: "{{ is_state_attr('sensor.waktu_sekarang', '24hours', now().strftime('%H:%M')) and is_state('input_select.azan_player', 'Google') }}"
+        id: solat
+    condition: []
+    action:
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ is_state('sensor.waktu_sekarang', 'Subuh') }}"
+            sequence:
+              - service: persistent_notification.create
+                data:
+                  message: >-
+                    {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+                    {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+                    yang sama waktu dengannya.
+                  notification_id: esolat_azan
+                  title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+              - service: notify.notify
+                data:
+                  message: >-
+                    {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+                    {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+                    yang sama waktu dengannya.
+                  title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+              - service: tts.google_translate_say
+                data:
+                  entity_id: "{{ states('select.azan_media_players') }}"
+                  language: id
+                  message: "Sekarang telah masuk waktu {{ states('sensor.waktu_sekarang') }} bagi kawasan ini dan kawasan-kawasan yang sama waktu dengannya."
+              - delay: "00:00:10"
+              - service: media_player.play_media
+                target:
+                  entity_id: "{{ states('select.azan_media_players') }}"
+                data:
+                  media_content_type: audio/mp3
+                  media_content_id: >-
+                    {{ "media-source://media_source/local/" ~ 
+                    (states('input_text.selected_audio_azan_subuh')).split(', ') | random }}
+                  extra:
+                    title: "Azan {{states('sensor.waktu_sekarang')}}"
+          - conditions:
+              - condition: template
+                value_template: >-
+                  {{ is_state('sensor.waktu_sekarang', 'Zohor') or 
+                  is_state('sensor.waktu_sekarang', 'Asar') or
+                  is_state('sensor.waktu_sekarang', 'Maghrib') or
+                  is_state('sensor.waktu_sekarang', 'Isyak') }}
+            sequence:
+              - service: persistent_notification.create
+                data:
+                  message: >-
+                    {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+                    {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+                    yang sama waktu dengannya.
+                  notification_id: esolat_azan
+                  title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+              - service: notify.notify
+                data:
+                  message: >-
+                    {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+                    {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+                    yang sama waktu dengannya.
+                  title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+              - service: tts.google_translate_say
+                data:
+                  entity_id: "{{ states('select.azan_media_players') }}"
+                  language: id
+                  message: "Sekarang telah masuk waktu {{ states('sensor.waktu_sekarang') }} bagi kawasan ini dan kawasan-kawasan yang sama waktu dengannya."
+              - delay: "00:00:10"
+              - service: media_player.play_media
+                target:
+                  entity_id: "{{ states('select.azan_media_players') }}"
+                data:
+                  media_content_type: audio/mp3
+                  media_content_id: >-
+                    {{ "media-source://media_source/local/" ~ 
+                    (states('input_text.selected_audio_azan')).split(', ') | random }}
+                  extra:
+                    title: "Azan {{states('sensor.waktu_sekarang')}}"
+        default:
+          - service: persistent_notification.create
+            data:
+              message: >-
+                {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+                {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+                yang sama waktu dengannya.
+              notification_id: esolat_azan
+              title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+    mode: single
+
+
+  - alias: 🕋 Azan - Alexa
+    description: "Play Audio and Notification (Disable this if you wish to use your own)"
+    trigger:
+      - platform: template
+        id: solat
+        value_template: >-
+          {{(is_state("sensor.solat_sekarang", "Subuh") or
+          is_state("sensor.solat_sekarang", "Zohor") or
+          is_state("sensor.solat_sekarang", "Asar") or
+          is_state("sensor.solat_sekarang", "Maghrib") or
+          is_state("sensor.solat_sekarang", "Isyak")) and is_state_attr('sensor.waktu_sekarang', '24hours', now().strftime('%H:%M')) and is_state('input_select.azan_player', 'Alexa')}}
+    condition: []
+    action:
+      - service: persistent_notification.create
+        data:
+          message: >-
+            {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+            {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+            yang sama waktu dengannya.
+          notification_id: esolat_azan
+          title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+      - service: notify.notify
+        data:
+          message: >-
+            {{ now().strftime('%-I:%M %p') }} - Sekarang telah masuk waktu
+            {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
+            yang sama waktu dengannya.
+          title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
+      - service: "{{ states('sensor.notify_alexa') }}"
+        data:
+          data:
+            type: tts
+          message: >
+            <audio src='{{ states("input_text.home_url") }}/local/esolat/{%if
+            is_state("sensor.waktu_sekarang","Subuh")%}tts_subuh.mp3{%elif 
+            is_state("sensor.waktu_sekarang","Zohor")%}tts_zohor.mp3{%elif 
+            is_state("sensor.waktu_sekarang","Asar")%}tts_asar.mp3{%elif 
+            is_state("sensor.waktu_sekarang","Maghrib")%}tts_maghrib.mp3{%elif 
+            is_state("sensor.waktu_sekarang","Isyak")%}tts_isyak.mp3{%endif%}'/><audio 
+            src='{{ states("input_text.home_url") }}/local/esolat/{%if
+            is_state("sensor.waktu_sekarang","Subuh")%}azansubuh{%else%}azan{%endif%}_alexa.mp3'/>
+    mode: single
