@@ -1,2 +1,2 @@
 homeassistant:
-  packages: !include_dir_named esolat/
+  packages: !include_dir_named HAMY/
