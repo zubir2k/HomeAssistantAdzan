@@ -551,11 +551,11 @@ automation:
       - platform: template
         id: solat
         value_template: >-
-          {{(is_state("sensor.solat_sekarang", "Subuh") or
-          is_state("sensor.solat_sekarang", "Zohor") or
-          is_state("sensor.solat_sekarang", "Asar") or
-          is_state("sensor.solat_sekarang", "Maghrib") or
-          is_state("sensor.solat_sekarang", "Isyak")) and is_state_attr('sensor.waktu_sekarang', '24hours', now().strftime('%H:%M')) and is_state('input_select.azan_player', 'Alexa')}}
+          {{(is_state("sensor.waktu_sekarang", "Subuh") or
+          is_state("sensor.waktu_sekarang", "Zohor") or
+          is_state("sensor.waktu_sekarang", "Asar") or
+          is_state("sensor.waktu_sekarang", "Maghrib") or
+          is_state("sensor.waktu_sekarang", "Isyak")) and is_state_attr('sensor.waktu_sekarang', '24hours', now().strftime('%H:%M')) and is_state('input_select.azan_player', 'Alexa')}}
     condition: []
     action:
       - service: persistent_notification.create
@@ -577,13 +577,7 @@ automation:
         data:
           data:
             type: tts
-          message: >
-            <audio src='{{ states("input_text.home_url") }}/local/esolat/{%if
-            is_state("sensor.waktu_sekarang","Subuh")%}tts_subuh.mp3{%elif 
-            is_state("sensor.waktu_sekarang","Zohor")%}tts_zohor.mp3{%elif 
-            is_state("sensor.waktu_sekarang","Asar")%}tts_asar.mp3{%elif 
-            is_state("sensor.waktu_sekarang","Maghrib")%}tts_maghrib.mp3{%elif 
-            is_state("sensor.waktu_sekarang","Isyak")%}tts_isyak.mp3{%endif%}'/><audio 
-            src='{{ states("input_text.home_url") }}/local/esolat/{%if
-            is_state("sensor.waktu_sekarang","Subuh")%}azansubuh{%else%}azan{%endif%}_alexa.mp3'/>
+          message: >-
+            <audio src='{{ states("input_text.home_url") }}/local/esolat/tts_{{states('sensor.waktu_sekarang')|lower}}.mp3'/>
+            <audio src='{{ states("input_text.home_url") }}/local/esolat/{%if is_state("sensor.waktu_sekarang","Subuh")%}azansubuh{%else%}azan{%endif%}_alexa.mp3'/>
     mode: single
