@@ -68,7 +68,13 @@ homeassistant:
 - **For Alexa**, please enter your `home_url`. **IMPORTANT**: Please ensure [Alexa_Media_Player](https://github.com/custom-components/alexa_media_player) addon has been configured.
 
 ### 3. Refresh
-- Press both Online and Local sensors to take effect.
+- Click here 
+[![Open your Home Assistant instance and show your automations.](https://my.home-assistant.io/badges/automations.svg)](https://my.home-assistant.io/redirect/automations/) to open your automation panel.
+- Run `Azan Yearly Update`
+
+> ![image](https://user-images.githubusercontent.com/1905339/211257538-94f8e7fb-60dc-4fa9-a355-5e5ea887ece6.png)
+
+- Press both Online and Local sensors to take effect. 
 
 ## Automation Ideas
 There are many ways that you can benefit from the prayer time sensors.
