@@ -109,4 +109,4 @@ Example: Alert family to get ready for Maghrib. Then turn off the TV 😁
 - [@farxpeace](https://github.com/farxpeace) - for the original integration code for AzanPro
 - [HomeAssistantMalaysia](https://www.facebook.com/groups/homeassistantmalaysia)
 
-*You may also try [GPS Based](https://gist.github.com/zubir2k/04a3180f50f621c5840bbdc477d0027f) Solat sensor. (API provided by MPT)*
+*You may also try [GPS Based](https://github.com/zubir2k/HomeAssistantEsolatGPS) Solat sensor using Appdaemon. (API provided by MPT)*
