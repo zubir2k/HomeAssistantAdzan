@@ -7,13 +7,15 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 - AzanPro - [Website](https://api.azanpro.com).
 - Home Assistant Official Islamic Prayer Time - [Website](https://www.home-assistant.io/integrations/islamic_prayer_times).
 
-**Whats New in v4.0**
+**Whats New in v4**
 - Fully revamped eSolat sensors.
 - Easy install with minimal configuration.
 - Prayer time sensor will show in timestamp format. 12/24hours format are now in attributes.
 - Automation are now created by default automatically. However, you may choose to create your own.
 - Dynamic Media Player selector.
 - Added support the official Home Assistant Islamic Prayer Time
+- Volume Control
+- Version checker
 
 **The Default Automation will perform the following:**
 - Play TTS (for Google) or Play audio TTS (for Alexa)
