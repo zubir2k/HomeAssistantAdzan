@@ -24,9 +24,11 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 ## Screenshot
 ![image](https://user-images.githubusercontent.com/1905339/154905774-b63319d5-4b4b-46e5-9fab-8efdeeb10400.png)
 
+![image](https://github.com/zubir2k/HomeAssistantAdzan/assets/1905339/edf6e02f-d883-4bcd-860b-1a0adcf85213)
+
 ![lovelace-dashboard](https://user-images.githubusercontent.com/1905339/196147059-341c5e1d-17af-4d88-b9de-a0932759dc85.png)
 
-![image](https://user-images.githubusercontent.com/1905339/196146905-8d58a7b5-846f-4461-8be8-73fc44eaa7da.png)
+![image](https://github.com/zubir2k/HomeAssistantAdzan/assets/1905339/c43aaefa-9fe2-4862-af03-119f4172e337)
 
 ## Video Tutorial
 
