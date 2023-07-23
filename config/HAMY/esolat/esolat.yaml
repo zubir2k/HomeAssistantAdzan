@@ -134,7 +134,8 @@ sensor:
     name: solat_version_latest
     unique_id: solat_version_latest
     #icon: mdi:update
-    resource: "https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/version.json"
+    #resource: "https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/version.json"
+    resource: "https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/config/HAMY/esolat/version.json"
     value_template: "{{ value_json.latest_version | default('Unknown') }}"
     json_attributes:
       - latest_version
