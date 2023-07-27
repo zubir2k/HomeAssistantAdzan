@@ -1,11 +1,11 @@
 ## Malaysia prayer time based on AzanPro and JAKIM Official API
-## Version 4.2 - All sensors, and input are packaged into 1 single esolat.yaml
+## Version 4.3 - All sensors, and input are packaged into 1 single esolat.yaml
 ## IMPORTANT NOTE: NO CHANGES IS REQUIRED TO THIS FILE. CONFIGURATION IS SET AT INPUT TEXT AND INPUT SELECT.
-## Last Update Date: 21/07/2023 - updated command_line sensor according to the new standard. Added volume control
+## Last Update Date: 27/07/2023 - Added 15min reminder and updater for easy update
 
 ## Downloader ##
 downloader:
-  download_dir: HAMY/esolat
+  download_dir: HAMY
 
 ## Media Location
 homeassistant:
@@ -485,6 +485,45 @@ sensor:
             {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ ((as_local(states('sensor.waktu_imsak') | as_datetime) + timedelta(days=1) - as_local(now())).total_seconds() / 60) | round }}
             {%endif%}
 
+## Updater Script ##
+script:
+  esolat_updater:
+    alias: "🕋 eSolat - Updater"
+    sequence:
+      - service: downloader.download_file
+        data:
+          overwrite: true
+          subdir: esolat
+          filename: esolat.yaml
+          url: >-
+            https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/config/HAMY/esolat/esolat.yaml
+      - service: downloader.download_file
+        data:
+          overwrite: true
+          url: >-
+            https://raw.githubusercontent.com/zubir2k/HomeAssistantAdzan/main/config/HAMY/esolat/version.json
+          subdir: esolat
+          filename: version.json
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - service: command_line.reload
+      - service: rest.reload
+      - service: automation.reload
+      - service: persistent_notification.create
+        data:
+          message: >-
+            eSolat Template update completed. It is recommended that you restart your Home Assistant.
+            {{ '\n' }}{{ '\n' }}**Version Installed:** {{ state_attr('binary_sensor.solat_version', 'current') }}{{ '\n' }}
+            **Version Available:** {{ state_attr('binary_sensor.solat_version', 'latest') }}{{ '\n' }}**Changes:** 
+            {{ '\n' }}{{ state_attr('binary_sensor.solat_version', 'description') }}
+          notification_id: esolat_update
+          title: 🕋 eSolat - Update Completed.
+    mode: single
+    icon: mdi:star-crescent
+
 ## Automation ##
 automation:
   - alias: 🕋 Azan - Update
@@ -501,8 +540,8 @@ automation:
           notification_id: esolat_update
           title: 🕋 eSolat - Update Available
           message: >-
-            Latest update available for download [Github](https://github.com/zubir2k/HomeAssistantAdzan/releases/latest).{{ '\n' }}{{ '\n' }}**Version:** {{ states('sensor.solat_version_latest') }}{{ '\n' }}**Changes:** 
-            {{ '\n' }}{{ state_attr('sensor.solat_version_latest', 'description') }}
+            Latest update available for download [Github](https://github.com/zubir2k/HomeAssistantAdzan/releases/latest).{{ '\n' }}{{ '\n' }}**Version:** {{ state_attr('binary_sensor.solat_version', 'latest') }}{{ '\n' }}**Changes:** 
+            {{ '\n' }}{{ state_attr('binary_sensor.solat_version', 'description') }}
     mode: single
   - alias: 🕋 Azan - Yearly Update
     description: "🤖 Fetch JSON data from JAKIM on 1st January every year"
@@ -520,6 +559,7 @@ automation:
             https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone={{states('input_text.solat')}}
           filename: esolat.json
           overwrite: true
+          subdir: esolat
       - delay:
           hours: 0
           minutes: 0
@@ -667,3 +707,27 @@ automation:
             <audio src='{{ states("input_text.home_url") }}/local/esolat/tts_{{states("sensor.waktu_sekarang")|lower}}.mp3'/>
             <audio src='{{ states("input_text.home_url") }}/local/esolat/{%if is_state("sensor.waktu_sekarang","Subuh")%}azansubuh{%else%}azan{%endif%}_alexa.mp3'/>
     mode: single
+  - alias: 🕋 Azan - Reminder
+    description: ""
+    trigger:
+      - platform: template
+        value_template: >-
+          {{ state_attr('sensor.waktu_sekarang', 'next') in ['Subuh', 'Zohor',
+          'Asar', 'Maghrib', 'Isyak'] and state_attr('sensor.solat_' ~
+          state_attr('sensor.waktu_sekarang', 'next') | lower,
+          '24hours')==(as_local(now()).strftime("%s") | int + (15*60)) |
+          timestamp_custom("%H:%M", false)}}
+    condition: []
+    action:
+      - service: persistent_notification.create
+        data:
+          message: >-
+            {{ state_attr('sensor.solat_' ~ state_attr('sensor.waktu_sekarang',
+            'next') | lower, '12hours') }} - Azan {{
+            state_attr('sensor.waktu_sekarang', 'next') }} akan berkumandang {{
+            state_attr('sensor.waktu_sekarang', 'nextinminutes') }} minit sahaja
+            lagi.
+          notification_id: esolat_remind
+          title: 🕋 eSolat - Waktu {{ state_attr('sensor.waktu_sekarang', 'next') }} ⏰
+    mode: single
+    
