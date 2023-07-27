@@ -1,4 +1,4 @@
 {
-  "latest_version": "4.2",
-  "description": "Fixes on command_line sensor, added volume control and version checker."
+  "latest_version": "4.3",
+  "description": "Added 15min solat reminder and updater"
 }
