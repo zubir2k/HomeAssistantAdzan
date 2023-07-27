@@ -14,13 +14,13 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 - Automation are now created by default automatically. However, you may choose to create your own.
 - Dynamic Media Player selector.
 - Added support the official Home Assistant Islamic Prayer Time
-- Volume Control
-- Version checker
+- Volume Slider Control based on the selected speaker/media_players
+- Version checker & updater (NOTE: The updater will only update essential files only).
 
 **The Default Automation will perform the following:**
 - Play TTS (for Google) or Play audio TTS (for Alexa)
 - Play Azan
-- Send Persistent Notification
+- Send Persistent Notification (Azan & 15min Reminder)
 - Send default Notification (notify.notify)
 
 ## Screenshot
@@ -28,9 +28,11 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 
 ![image](https://github.com/zubir2k/HomeAssistantAdzan/assets/1905339/edf6e02f-d883-4bcd-860b-1a0adcf85213)
 
+![image](https://github.com/zubir2k/HomeAssistantAdzan/assets/1905339/83adcf9b-b3be-486e-872f-13c3a8136acd)
+
 ![lovelace-dashboard](https://user-images.githubusercontent.com/1905339/196147059-341c5e1d-17af-4d88-b9de-a0932759dc85.png)
 
-![image](https://github.com/zubir2k/HomeAssistantAdzan/assets/1905339/c43aaefa-9fe2-4862-af03-119f4172e337)
+![image](https://github.com/zubir2k/HomeAssistantAdzan/assets/1905339/f8a19c2a-dedf-45a1-905a-af0d4110d043)
 
 ## Video Tutorial
 
