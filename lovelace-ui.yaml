@@ -14,9 +14,9 @@ cards:
           tap_action:
             action: call-service
             service: script.esolat_updater
+            data: {}
             confirmation:
               text: This will update eSolat. Continue?
-            data: []
           action_name: Update
           icon: mdi:update
           name: eSolat Updater      
@@ -60,6 +60,7 @@ cards:
         label: Manual Control
       - type: call-service
         service: rest.reload
+        data: {}
         name: Online Sensors (eSolat/AzanPro)
         icon: mdi:reload
         action_name: Refresh
