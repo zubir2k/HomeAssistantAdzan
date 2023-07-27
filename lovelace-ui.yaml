@@ -5,6 +5,21 @@ cards:
     entities:
       - entity: sensor.hijridate
       - entity: binary_sensor.solat_version
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.solat_version
+            state_not: 'off'
+        row:
+          type: button
+          tap_action:
+            action: call-service
+            service: script.esolat_updater
+            confirmation:
+              text: This will update eSolat. Continue?
+            data: []
+          action_name: Update
+          icon: mdi:update
+          name: eSolat Updater      
       - type: section
         label: State Code & Source
       - entity: select.solat_source
