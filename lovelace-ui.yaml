@@ -67,7 +67,7 @@ cards:
       - type: button
         tap_action:
           action: call-service
-          service: automation.reload
+          service: automation.trigger
           data:
             entity_id: automation.azan_yearly_update
         name: Local Sensors
