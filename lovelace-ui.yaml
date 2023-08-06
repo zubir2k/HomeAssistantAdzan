@@ -4,10 +4,10 @@ cards:
   - type: entities
     entities:
       - entity: sensor.hijridate
-      - entity: binary_sensor.solat_version
+      - entity: binary_sensor.esolat_version
       - type: conditional
         conditions:
-          - entity: binary_sensor.solat_version
+          - entity: binary_sensor.esolat_version
             state_not: 'off'
         row:
           type: button
