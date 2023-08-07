@@ -1,6 +1,6 @@
 ![Home Assistant Adzan](https://user-images.githubusercontent.com/1905339/170957516-6173d318-2600-4372-bc19-b13e224272de.png)\
-![visitors](https://visitor-badge.glitch.me/badge?page_id=zubir2k.homeassistantadzan.visitor-badge)
-[![Donate](https://img.shields.io/badge/donate-Coffee-yellow.svg)](https://zbrj.ml/buymecoffee)
+[![Repo](https://img.shields.io/badge/zubir2k-repository-brightgreen?logo=github)](https://zubirco.de/) 
+[![Donate](https://img.shields.io/badge/donate-Coffee-yellow.svg)](https://zubirco.de/buymecoffee)
 
 Automation for Malaysia Adzan (Muslim call to prayer) based on the following sources:
 - JAKIM Official (eSolat) - [Website](https://www.e-solat.gov.my).
@@ -116,3 +116,6 @@ Example: Alert family to get ready for Maghrib. Then turn off the TV 😁
 - [HomeAssistantMalaysia](https://www.facebook.com/groups/homeassistantmalaysia)
 
 *You may also try [GPS Based](https://github.com/zubir2k/HomeAssistantEsolatGPS) Solat sensor using Appdaemon. (API provided by MPT)*
+
+## ⚠ Disclaimer
+THIS IS NOT AN INTEGRATION ADD-ON ([issue#3](https://github.com/zubir2k/HomeAssistantAdzan/issues/3)). THIS IS A TEMPLATE THAT CREATES SENSORS AND AUTOMATION FOR ADZAN PRAYER.
