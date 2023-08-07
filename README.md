@@ -14,7 +14,7 @@ Automation for Malaysia Adzan (Muslim call to prayer) based on the following sou
 - Automation are now created by default automatically. However, you may choose to create your own.
 - Dynamic Media Player selector.
 - Added support the official Home Assistant Islamic Prayer Time
-- Volume Slider Control based on the selected speaker/media_players
+- Volume Slider Control based on the selected speaker/media_players (feature added from [pull-request #2](https://github.com/zubir2k/HomeAssistantAdzan/pull/2))
 - Version checker & updater (NOTE: The updater will only update essential files only).
 
 **The Default Automation will perform the following:**
