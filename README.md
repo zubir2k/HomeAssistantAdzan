@@ -1,4 +1,6 @@
 ![Home Assistant Adzan](https://user-images.githubusercontent.com/1905339/170957516-6173d318-2600-4372-bc19-b13e224272de.png)\
+![GitHub Repo stars](https://img.shields.io/github/stars/zubir2k/HomeAssistantAdzan?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/zubirjamal?label=Follow&style=social)](https://twitter.com/zubirjamal)
 [![Repo](https://img.shields.io/badge/zubir2k-repository-brightgreen?logo=github)](https://zubirco.de/) 
 [![Donate](https://img.shields.io/badge/donate-Coffee-yellow.svg)](https://zubirco.de/buymecoffee)
 
