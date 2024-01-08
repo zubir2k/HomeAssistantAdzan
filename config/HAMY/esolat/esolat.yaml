@@ -216,7 +216,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].imsak, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].imsak, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['imsak'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ (as_timestamp(states('sensor.fajr_prayer')) | int - (10*60)) | timestamp_utc }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ (as_timestamp(states('sensor.islamic_prayer_times_fajr_prayer')) | int - (10*60)) | timestamp_utc }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -239,7 +239,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].syuruk, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].syuruk, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['syuruk'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.sunrise_time') }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.islamic_prayer_times_sunrise_time') }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -294,7 +294,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].fajr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].fajr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['subuh'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.fajr_prayer') }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.islamic_prayer_times_fajr_prayer') }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -317,7 +317,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].dhuhr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].dhuhr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['zohor'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.dhuhr_prayer') }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.islamic_prayer_times_dhuhr_prayer') }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -340,7 +340,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].asr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].asr, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['asar'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.asr_prayer') }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.islamic_prayer_times_asr_prayer') }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -363,7 +363,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].maghrib, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].maghrib, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['maghrib'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.maghrib_prayer') }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.islamic_prayer_times_maghrib_prayer') }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -386,7 +386,7 @@ sensor:
           {%if is_state('select.solat_source', 'Local')%}{%set yearday = now().strftime('%j') | int%}{{ as_timestamp(strptime(state_attr('sensor.solat_local', 'prayerTime')[yearday-1].date ~ " " ~ state_attr('sensor.solat_local', 'prayerTime')[yearday-1].isha, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'eSolat')%}{{ as_timestamp(strptime(state_attr('sensor.solat_jakim', 'prayerTime')[0].date ~ " " ~ state_attr('sensor.solat_jakim', 'prayerTime')[0].isha, '%d-%b-%Y %H:%M:%S')) | timestamp_local }}
           {%elif is_state('select.solat_source', 'AzanPro')%}{{ as_timestamp(strptime(now().date() ~ " " ~ state_attr('sensor.solat_azanpro', 'prayer_times')['isyak'], '%Y-%m-%d %H:%M')) | timestamp_local }}
-          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.isha_prayer') }}
+          {%elif is_state("select.solat_source", "Islamic Prayer Times")%}{{ states('sensor.islamic_prayer_times_isha_prayer') }}
           {%endif%}
         attribute_templates: 
           12hours: >-
@@ -463,15 +463,15 @@ sensor:
             {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}Imsak
             {%endif%}
           nextremaining: >-
-            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ (as_local(states('sensor.solat_subuh') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}{{ (as_local(states('sensor.waktu_syuruk') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}{{ (as_local(states('sensor.waktu_isyraq') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}{{ (as_local(states('sensor.waktu_dhuha') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}{{ (as_local(states('sensor.solat_zohor') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}{{ (as_local(states('sensor.solat_asar') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}{{ (as_local(states('sensor.solat_maghrib') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}{{ (as_local(states('sensor.solat_isyak') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
-            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ (as_local(states('sensor.waktu_imsak') | as_datetime) + timedelta(days=1) - as_local(now())).total_seconds() | timestamp_custom('%H hours, %M minutes and %S seconds', false) }}
+            {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ (as_local(states('sensor.solat_subuh') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Subuh') %}{{ (as_local(states('sensor.waktu_syuruk') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Syuruk') %}{{ (as_local(states('sensor.waktu_isyraq') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyraq') %}{{ (as_local(states('sensor.waktu_dhuha') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Dhuha') %}{{ (as_local(states('sensor.solat_zohor') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Zohor') %}{{ (as_local(states('sensor.solat_asar') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Asar') %}{{ (as_local(states('sensor.solat_maghrib') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Maghrib') %}{{ (as_local(states('sensor.solat_isyak') | as_datetime) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %S seconds', false) }}
+            {%elif is_state('sensor.waktu_sekarang', 'Isyak') %}{{ (as_local(states('sensor.waktu_imsak') | as_datetime) + timedelta(days=1) - as_local(now())).total_seconds() | timestamp_custom('%-H hours, %-M minutes and %-S seconds', false) }}
             {%endif%}
           nextinminutes: >-
             {%if is_state('sensor.waktu_sekarang', 'Imsak') %}{{ ((as_local(states('sensor.solat_subuh') | as_datetime) - as_local(now())).total_seconds() / 60) | round }}
