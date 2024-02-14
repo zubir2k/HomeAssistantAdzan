@@ -1,7 +1,7 @@
 ## Malaysia prayer time based on AzanPro and JAKIM Official API
-## Version 4.3 - All sensors, and input are packaged into 1 single esolat.yaml
+## Version 4.4 - All sensors, and input are packaged into 1 single esolat.yaml
 ## IMPORTANT NOTE: NO CHANGES IS REQUIRED TO THIS FILE. CONFIGURATION IS SET AT INPUT TEXT AND INPUT SELECT.
-## Last Update Date: 27/07/2023 - Added 15min reminder and updater for easy update
+## Last Update Date: 14/02/2024 - Added TTS selection and Volume control.
 
 ## Downloader ##
 downloader:
@@ -62,6 +62,17 @@ template:
           data:
             value: "{{ option }}"
 
+    - name: "Azan TTS"
+      state: "{{ states('input_text.selected_azantts') }}"
+      options: >
+        {{ states.tts | rejectattr('state', 'in', ['unavailable', 'unknown']) | map(attribute ='entity_id') | list }}
+      select_option:
+        - service: input_text.set_value
+          target:
+            entity_id: input_text.selected_azantts
+          data:
+            value: "{{ option }}"
+
   - binary_sensor:
     - name: "eSolat Version"
       unique_id: solat_versioncheck
@@ -110,7 +121,9 @@ input_text:
     name: "Audio Azan (azan1.mp3, azan2.mp3...)"
   selected_audio_azan_subuh:
     name: "Audio Azan Subuh (azansubuh1.mp3, azansubuh2.mp3...)"
-
+  selected_azantts:
+    name: "Azan TTS"
+    
 ## Main Sensors ##
 command_line:
   - sensor:
@@ -584,6 +597,16 @@ automation:
         id: solat
     condition: []
     action:
+      - service: media_player.turn_on
+        data: {}
+        target:
+          entity_id: "{{ states('select.azan_media_players') }}"
+      - service: media_player.volume_set
+        data:
+          volume_level: >- 
+            {{ states('input_number.azan_volume') | float }}
+        target:
+          entity_id: "{{ states('select.azan_media_players') }}"
       - choose:
           - conditions:
               - condition: template
@@ -604,11 +627,13 @@ automation:
                     {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
                     yang sama waktu dengannya.
                   title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
-              - service: tts.google_translate_say
+              - service: tts.speak
                 data:
-                  entity_id: "{{ states('select.azan_media_players') }}"
+                  media_player_entity_id: "{{ states('select.azan_media_players') }}"
                   language: id
                   message: "Sekarang telah masuk waktu {{ states('sensor.waktu_sekarang') }} bagi kawasan ini dan kawasan-kawasan yang sama waktu dengannya."
+                target:
+                  entity_id: "{{ states('select.azan_tts') }}"
               - delay: "00:00:10"
               - service: media_player.play_media
                 target:
@@ -644,11 +669,13 @@ automation:
                     {{states('sensor.waktu_sekarang')}} bagi kawasan ini dan kawasan
                     yang sama waktu dengannya.
                   title: "🕋 eSolat - Waktu {{states('sensor.waktu_sekarang')}}"
-              - service: tts.google_translate_say
+              - service: tts.speak
                 data:
-                  entity_id: "{{ states('select.azan_media_players') }}"
+                  media_player_entity_id: "{{ states('select.azan_media_players') }}"
                   language: id
                   message: "Sekarang telah masuk waktu {{ states('sensor.waktu_sekarang') }} bagi kawasan ini dan kawasan-kawasan yang sama waktu dengannya."
+                target:
+                  entity_id: "{{ states('select.azan_tts') }}"
               - delay: "00:00:10"
               - service: media_player.play_media
                 target:
@@ -730,4 +757,3 @@ automation:
           notification_id: esolat_remind
           title: 🕋 eSolat - Waktu {{ state_attr('sensor.waktu_sekarang', 'next') }} ⏰
     mode: single
-    
