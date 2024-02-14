@@ -1,4 +1,4 @@
 {
-  "latest_version": "4.3",
-  "description": "Added 15min solat reminder and updater"
+  "latest_version": "4.4",
+  "description": "Switching to the new TTS service call. Added volume control and TTS selector"
 }
