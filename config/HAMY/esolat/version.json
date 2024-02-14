@@ -1,4 +1,4 @@
 {
-  "latest_version": "4.3.1",
-  "description": "Fixed on Islamic Prayer Times entity naming"
+  "latest_version": "4.4",
+  "description": "Switching to the new TTS service call. Added volume control and TTS selector"
 }
