@@ -19,7 +19,7 @@ cards:
               text: This will update eSolat. Continue?
           action_name: Update
           icon: mdi:update
-          name: eSolat Updater      
+          name: eSolat Updater
       - type: section
         label: State Code & Source
       - entity: select.solat_source
@@ -33,6 +33,13 @@ cards:
         label: Azan Audio & Automation
       - entity: select.azan_media_players
       - entity: input_select.azan_player
+      - type: conditional
+        conditions:
+          - entity: input_select.azan_player
+            state: Google
+            state_not: Custom
+        row:
+          entity: select.azan_tts
       - type: conditional
         conditions:
           - entity: input_select.azan_player
@@ -54,9 +61,14 @@ cards:
             state_not: Custom
         row:
           entity: input_text.home_url
+      - type: conditional
+        conditions:
+          - entity: input_select.azan_player
+            state: Google
+            state_not: Custom
+        row:
+          entity: number.azan_volume
       - type: section
-      - entity: number.azan_volume
-      - type: section      
         label: Manual Control
       - type: call-service
         service: rest.reload
